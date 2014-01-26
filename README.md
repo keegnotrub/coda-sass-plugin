@@ -2,11 +2,11 @@
 
 This is a Sass plug-in for Panic's Coda 2.
 
-This plug-in converts scss files into css files automatically on save using the libsass library (no Ruby required).
+This plug-in converts scss files into css files automatically on save using the [libsass](https://github.com/hcatlin/libsass) library (no Ruby or RubyGems required).
 
 ## To Install
 
-To Install, unzip the SassPlug-in.zip file then double click Sass.codaplugin.
+To Install, unzip the latest [Sass.codaplugin.zip](https://github.com/keegnotrub/coda-sass-plugin/releases) file from the releases then double click Sass.codaplugin.
 
 ## Changelog
 
