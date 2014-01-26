@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7E2B24FB189497AE004CC331 /* ast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24B9189497AD004CC331 /* ast.cpp */; };
+		7E2B24FC189497AE004CC331 /* base64vlq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24BF189497AD004CC331 /* base64vlq.cpp */; };
+		7E2B24FD189497AE004CC331 /* bind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24C1189497AD004CC331 /* bind.cpp */; };
+		7E2B24FE189497AE004CC331 /* constants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24C4189497AD004CC331 /* constants.cpp */; };
+		7E2B24FF189497AE004CC331 /* context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24C6189497AD004CC331 /* context.cpp */; };
+		7E2B2500189497AE004CC331 /* contextualize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24C8189497AD004CC331 /* contextualize.cpp */; };
+		7E2B2501189497AE004CC331 /* copy_c_str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24CA189497AD004CC331 /* copy_c_str.cpp */; };
+		7E2B2503189497AE004CC331 /* error_handling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24CE189497AD004CC331 /* error_handling.cpp */; };
+		7E2B2504189497AE004CC331 /* eval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24D0189497AD004CC331 /* eval.cpp */; };
+		7E2B2505189497AE004CC331 /* expand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24D2189497AD004CC331 /* expand.cpp */; };
+		7E2B2506189497AE004CC331 /* extconf.rb in Resources */ = {isa = PBXBuildFile; fileRef = 7E2B24D4189497AD004CC331 /* extconf.rb */; };
+		7E2B2507189497AE004CC331 /* extend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24D5189497AD004CC331 /* extend.cpp */; };
+		7E2B2508189497AE004CC331 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24D7189497AD004CC331 /* file.cpp */; };
+		7E2B2509189497AE004CC331 /* functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24D9189497AD004CC331 /* functions.cpp */; };
+		7E2B250A189497AE004CC331 /* inspect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24DB189497AD004CC331 /* inspect.cpp */; };
+		7E2B250B189497AE004CC331 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7E2B24DE189497AE004CC331 /* LICENSE */; };
+		7E2B250C189497AE004CC331 /* output_compressed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24E2189497AE004CC331 /* output_compressed.cpp */; };
+		7E2B250D189497AE004CC331 /* output_nested.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24E4189497AE004CC331 /* output_nested.cpp */; };
+		7E2B250E189497AE004CC331 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24E6189497AE004CC331 /* parser.cpp */; };
+		7E2B250F189497AE004CC331 /* prelexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24E9189497AE004CC331 /* prelexer.cpp */; };
+		7E2B2510189497AE004CC331 /* sass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24EB189497AE004CC331 /* sass.cpp */; };
+		7E2B2511189497AE004CC331 /* sass_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24ED189497AE004CC331 /* sass_interface.cpp */; };
+		7E2B2512189497AE004CC331 /* sassc++.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24EF189497AE004CC331 /* sassc++.cpp */; };
+		7E2B2513189497AE004CC331 /* source_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F0189497AE004CC331 /* source_map.cpp */; };
+		7E2B2514189497AE004CC331 /* to_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F2189497AE004CC331 /* to_c.cpp */; };
+		7E2B2515189497AE004CC331 /* to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F4189497AE004CC331 /* to_string.cpp */; };
+		7E2B2516189497AE004CC331 /* units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F7189497AE004CC331 /* units.cpp */; };
+		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
+		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		F163D8F50C67D694000A99F5 /* EGSassPlugIn.m in Sources */ = {isa = PBXBuildFile; fileRef = F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		072855B614842DEB00B45937 /* CodaPlugInsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodaPlugInsController.h; sourceTree = "<group>"; };
+		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		32DBCF630370AF2F00C91783 /* Sass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sass_Prefix.pch; sourceTree = "<group>"; };
+		7E2B24B9189497AD004CC331 /* ast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cpp; sourceTree = "<group>"; };
+		7E2B24BA189497AD004CC331 /* ast.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast.hpp; sourceTree = "<group>"; };
+		7E2B24BB189497AD004CC331 /* ast_def_macros.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast_def_macros.hpp; sourceTree = "<group>"; };
+		7E2B24BC189497AD004CC331 /* ast_factory.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast_factory.hpp; sourceTree = "<group>"; };
+		7E2B24BD189497AD004CC331 /* ast_fwd_decl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast_fwd_decl.hpp; sourceTree = "<group>"; };
+		7E2B24BE189497AD004CC331 /* backtrace.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = backtrace.hpp; sourceTree = "<group>"; };
+		7E2B24BF189497AD004CC331 /* base64vlq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base64vlq.cpp; sourceTree = "<group>"; };
+		7E2B24C0189497AD004CC331 /* base64vlq.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = base64vlq.hpp; sourceTree = "<group>"; };
+		7E2B24C1189497AD004CC331 /* bind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bind.cpp; sourceTree = "<group>"; };
+		7E2B24C2189497AD004CC331 /* bind.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bind.hpp; sourceTree = "<group>"; };
+		7E2B24C3189497AD004CC331 /* color_names.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = color_names.hpp; sourceTree = "<group>"; };
+		7E2B24C4189497AD004CC331 /* constants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = constants.cpp; sourceTree = "<group>"; };
+		7E2B24C5189497AD004CC331 /* constants.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = constants.hpp; sourceTree = "<group>"; };
+		7E2B24C6189497AD004CC331 /* context.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = context.cpp; sourceTree = "<group>"; };
+		7E2B24C7189497AD004CC331 /* context.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = context.hpp; sourceTree = "<group>"; };
+		7E2B24C8189497AD004CC331 /* contextualize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = contextualize.cpp; sourceTree = "<group>"; };
+		7E2B24C9189497AD004CC331 /* contextualize.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = contextualize.hpp; sourceTree = "<group>"; };
+		7E2B24CA189497AD004CC331 /* copy_c_str.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = copy_c_str.cpp; sourceTree = "<group>"; };
+		7E2B24CB189497AD004CC331 /* copy_c_str.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = copy_c_str.hpp; sourceTree = "<group>"; };
+		7E2B24CD189497AD004CC331 /* environment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = environment.hpp; sourceTree = "<group>"; };
+		7E2B24CE189497AD004CC331 /* error_handling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_handling.cpp; sourceTree = "<group>"; };
+		7E2B24CF189497AD004CC331 /* error_handling.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = error_handling.hpp; sourceTree = "<group>"; };
+		7E2B24D0189497AD004CC331 /* eval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = eval.cpp; sourceTree = "<group>"; };
+		7E2B24D1189497AD004CC331 /* eval.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = eval.hpp; sourceTree = "<group>"; };
+		7E2B24D2189497AD004CC331 /* expand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = expand.cpp; sourceTree = "<group>"; };
+		7E2B24D3189497AD004CC331 /* expand.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = expand.hpp; sourceTree = "<group>"; };
+		7E2B24D4189497AD004CC331 /* extconf.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = extconf.rb; sourceTree = "<group>"; };
+		7E2B24D5189497AD004CC331 /* extend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extend.cpp; sourceTree = "<group>"; };
+		7E2B24D6189497AD004CC331 /* extend.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = extend.hpp; sourceTree = "<group>"; };
+		7E2B24D7189497AD004CC331 /* file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = file.cpp; sourceTree = "<group>"; };
+		7E2B24D8189497AD004CC331 /* file.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = file.hpp; sourceTree = "<group>"; };
+		7E2B24D9189497AD004CC331 /* functions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = functions.cpp; sourceTree = "<group>"; };
+		7E2B24DA189497AD004CC331 /* functions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = functions.hpp; sourceTree = "<group>"; };
+		7E2B24DB189497AD004CC331 /* inspect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = inspect.cpp; sourceTree = "<group>"; };
+		7E2B24DC189497AD004CC331 /* inspect.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = inspect.hpp; sourceTree = "<group>"; };
+		7E2B24DD189497AE004CC331 /* kwd_arg_macros.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kwd_arg_macros.hpp; sourceTree = "<group>"; };
+		7E2B24DE189497AE004CC331 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		7E2B24DF189497AE004CC331 /* mapping.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mapping.hpp; sourceTree = "<group>"; };
+		7E2B24E0189497AE004CC331 /* memory_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = memory_manager.hpp; sourceTree = "<group>"; };
+		7E2B24E1189497AE004CC331 /* operation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = operation.hpp; sourceTree = "<group>"; };
+		7E2B24E2189497AE004CC331 /* output_compressed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = output_compressed.cpp; sourceTree = "<group>"; };
+		7E2B24E3189497AE004CC331 /* output_compressed.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = output_compressed.hpp; sourceTree = "<group>"; };
+		7E2B24E4189497AE004CC331 /* output_nested.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = output_nested.cpp; sourceTree = "<group>"; };
+		7E2B24E5189497AE004CC331 /* output_nested.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = output_nested.hpp; sourceTree = "<group>"; };
+		7E2B24E6189497AE004CC331 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
+		7E2B24E7189497AE004CC331 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = parser.hpp; sourceTree = "<group>"; };
+		7E2B24E8189497AE004CC331 /* position.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = position.hpp; sourceTree = "<group>"; };
+		7E2B24E9189497AE004CC331 /* prelexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = prelexer.cpp; sourceTree = "<group>"; };
+		7E2B24EA189497AE004CC331 /* prelexer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = prelexer.hpp; sourceTree = "<group>"; };
+		7E2B24EB189497AE004CC331 /* sass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sass.cpp; sourceTree = "<group>"; };
+		7E2B24EC189497AE004CC331 /* sass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sass.h; sourceTree = "<group>"; };
+		7E2B24ED189497AE004CC331 /* sass_interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sass_interface.cpp; sourceTree = "<group>"; };
+		7E2B24EE189497AE004CC331 /* sass_interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sass_interface.h; sourceTree = "<group>"; };
+		7E2B24EF189497AE004CC331 /* sassc++.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "sassc++.cpp"; sourceTree = "<group>"; };
+		7E2B24F0189497AE004CC331 /* source_map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = source_map.cpp; sourceTree = "<group>"; };
+		7E2B24F1189497AE004CC331 /* source_map.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = source_map.hpp; sourceTree = "<group>"; };
+		7E2B24F2189497AE004CC331 /* to_c.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = to_c.cpp; sourceTree = "<group>"; };
+		7E2B24F3189497AE004CC331 /* to_c.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = to_c.hpp; sourceTree = "<group>"; };
+		7E2B24F4189497AE004CC331 /* to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = to_string.cpp; sourceTree = "<group>"; };
+		7E2B24F5189497AE004CC331 /* to_string.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = to_string.hpp; sourceTree = "<group>"; };
+		7E2B24F6189497AE004CC331 /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
+		7E2B24F7189497AE004CC331 /* units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = units.cpp; sourceTree = "<group>"; };
+		7E2B24F8189497AE004CC331 /* units.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = units.hpp; sourceTree = "<group>"; };
+		8D5B49B6048680CD000E48DA /* Sass.codaplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sass.codaplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		F163D8F30C67D694000A99F5 /* EGSassPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = EGSassPlugIn.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = EGSassPlugIn.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D5B49B3048680CD000E48DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		089C166AFE841209C02AAC07 /* Capitalize */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AFFE84173DC02AAC07 /* Classes */,
+				32C88E010371C26100C91783 /* Other Sources */,
+				089C167CFE841241C02AAC07 /* Resources */,
+				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
+				19C28FB8FE9D52D311CA2CBB /* Products */,
+			);
+			name = Capitalize;
+			sourceTree = "<group>";
+		};
+		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,
+				1058C7AEFEA557BF11CA2CBB /* Other Frameworks */,
+			);
+			name = "Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C167CFE841241C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D5B49B7048680CD000E48DA /* Info.plist */,
+				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AFFE84173DC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				7E2B24B6189497AD004CC331 /* libsass */,
+				072855B614842DEB00B45937 /* CodaPlugInsController.h */,
+				F163D8F30C67D694000A99F5 /* EGSassPlugIn.h */,
+				F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				089C167FFE841241C02AAC07 /* AppKit.framework */,
+				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
+				089C1672FE841209C02AAC07 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FB8FE9D52D311CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D5B49B6048680CD000E48DA /* Sass.codaplugin */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		32C88E010371C26100C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF630370AF2F00C91783 /* Sass_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		7E2B24B6189497AD004CC331 /* libsass */ = {
+			isa = PBXGroup;
+			children = (
+				7E2B24B9189497AD004CC331 /* ast.cpp */,
+				7E2B24BA189497AD004CC331 /* ast.hpp */,
+				7E2B24BB189497AD004CC331 /* ast_def_macros.hpp */,
+				7E2B24BC189497AD004CC331 /* ast_factory.hpp */,
+				7E2B24BD189497AD004CC331 /* ast_fwd_decl.hpp */,
+				7E2B24BE189497AD004CC331 /* backtrace.hpp */,
+				7E2B24BF189497AD004CC331 /* base64vlq.cpp */,
+				7E2B24C0189497AD004CC331 /* base64vlq.hpp */,
+				7E2B24C1189497AD004CC331 /* bind.cpp */,
+				7E2B24C2189497AD004CC331 /* bind.hpp */,
+				7E2B24C3189497AD004CC331 /* color_names.hpp */,
+				7E2B24C4189497AD004CC331 /* constants.cpp */,
+				7E2B24C5189497AD004CC331 /* constants.hpp */,
+				7E2B24C6189497AD004CC331 /* context.cpp */,
+				7E2B24C7189497AD004CC331 /* context.hpp */,
+				7E2B24C8189497AD004CC331 /* contextualize.cpp */,
+				7E2B24C9189497AD004CC331 /* contextualize.hpp */,
+				7E2B24CA189497AD004CC331 /* copy_c_str.cpp */,
+				7E2B24CB189497AD004CC331 /* copy_c_str.hpp */,
+				7E2B24CD189497AD004CC331 /* environment.hpp */,
+				7E2B24CE189497AD004CC331 /* error_handling.cpp */,
+				7E2B24CF189497AD004CC331 /* error_handling.hpp */,
+				7E2B24D0189497AD004CC331 /* eval.cpp */,
+				7E2B24D1189497AD004CC331 /* eval.hpp */,
+				7E2B24D2189497AD004CC331 /* expand.cpp */,
+				7E2B24D3189497AD004CC331 /* expand.hpp */,
+				7E2B24D4189497AD004CC331 /* extconf.rb */,
+				7E2B24D5189497AD004CC331 /* extend.cpp */,
+				7E2B24D6189497AD004CC331 /* extend.hpp */,
+				7E2B24D7189497AD004CC331 /* file.cpp */,
+				7E2B24D8189497AD004CC331 /* file.hpp */,
+				7E2B24D9189497AD004CC331 /* functions.cpp */,
+				7E2B24DA189497AD004CC331 /* functions.hpp */,
+				7E2B24DB189497AD004CC331 /* inspect.cpp */,
+				7E2B24DC189497AD004CC331 /* inspect.hpp */,
+				7E2B24DD189497AE004CC331 /* kwd_arg_macros.hpp */,
+				7E2B24DE189497AE004CC331 /* LICENSE */,
+				7E2B24DF189497AE004CC331 /* mapping.hpp */,
+				7E2B24E0189497AE004CC331 /* memory_manager.hpp */,
+				7E2B24E1189497AE004CC331 /* operation.hpp */,
+				7E2B24E2189497AE004CC331 /* output_compressed.cpp */,
+				7E2B24E3189497AE004CC331 /* output_compressed.hpp */,
+				7E2B24E4189497AE004CC331 /* output_nested.cpp */,
+				7E2B24E5189497AE004CC331 /* output_nested.hpp */,
+				7E2B24E6189497AE004CC331 /* parser.cpp */,
+				7E2B24E7189497AE004CC331 /* parser.hpp */,
+				7E2B24E8189497AE004CC331 /* position.hpp */,
+				7E2B24E9189497AE004CC331 /* prelexer.cpp */,
+				7E2B24EA189497AE004CC331 /* prelexer.hpp */,
+				7E2B24EB189497AE004CC331 /* sass.cpp */,
+				7E2B24EC189497AE004CC331 /* sass.h */,
+				7E2B24ED189497AE004CC331 /* sass_interface.cpp */,
+				7E2B24EE189497AE004CC331 /* sass_interface.h */,
+				7E2B24EF189497AE004CC331 /* sassc++.cpp */,
+				7E2B24F0189497AE004CC331 /* source_map.cpp */,
+				7E2B24F1189497AE004CC331 /* source_map.hpp */,
+				7E2B24F2189497AE004CC331 /* to_c.cpp */,
+				7E2B24F3189497AE004CC331 /* to_c.hpp */,
+				7E2B24F4189497AE004CC331 /* to_string.cpp */,
+				7E2B24F5189497AE004CC331 /* to_string.hpp */,
+				7E2B24F6189497AE004CC331 /* token.hpp */,
+				7E2B24F7189497AE004CC331 /* units.cpp */,
+				7E2B24F8189497AE004CC331 /* units.hpp */,
+			);
+			path = libsass;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D5B49AC048680CD000E48DA /* Sass */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Sass" */;
+			buildPhases = (
+				8D5B49AF048680CD000E48DA /* Resources */,
+				8D5B49B1048680CD000E48DA /* Sources */,
+				8D5B49B3048680CD000E48DA /* Frameworks */,
+				3C79072610D6F04000E12B3C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Sass;
+			productInstallPath = "$(HOME)/Library/Bundles";
+			productName = Capitalize;
+			productReference = 8D5B49B6048680CD000E48DA /* Sass.codaplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		089C1669FE841209C02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+			};
+			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Sass" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+				English,
+			);
+			mainGroup = 089C166AFE841209C02AAC07 /* Capitalize */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D5B49AC048680CD000E48DA /* Sass */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D5B49AF048680CD000E48DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E2B250B189497AE004CC331 /* LICENSE in Resources */,
+				7E2B2506189497AE004CC331 /* extconf.rb in Resources */,
+				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3C79072610D6F04000E12B3C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp -R -f \"$BUILD_DIR/$CONFIGURATION/$PRODUCT_NAME.$WRAPPER_EXTENSION\" \"$HOME/Library/Application Support/Coda/Plug-ins\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D5B49B1048680CD000E48DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E2B24FB189497AE004CC331 /* ast.cpp in Sources */,
+				F163D8F50C67D694000A99F5 /* EGSassPlugIn.m in Sources */,
+				7E2B24FD189497AE004CC331 /* bind.cpp in Sources */,
+				7E2B2516189497AE004CC331 /* units.cpp in Sources */,
+				7E2B2510189497AE004CC331 /* sass.cpp in Sources */,
+				7E2B250A189497AE004CC331 /* inspect.cpp in Sources */,
+				7E2B250E189497AE004CC331 /* parser.cpp in Sources */,
+				7E2B2508189497AE004CC331 /* file.cpp in Sources */,
+				7E2B250F189497AE004CC331 /* prelexer.cpp in Sources */,
+				7E2B2504189497AE004CC331 /* eval.cpp in Sources */,
+				7E2B24FF189497AE004CC331 /* context.cpp in Sources */,
+				7E2B2505189497AE004CC331 /* expand.cpp in Sources */,
+				7E2B2509189497AE004CC331 /* functions.cpp in Sources */,
+				7E2B2515189497AE004CC331 /* to_string.cpp in Sources */,
+				7E2B2501189497AE004CC331 /* copy_c_str.cpp in Sources */,
+				7E2B2500189497AE004CC331 /* contextualize.cpp in Sources */,
+				7E2B2514189497AE004CC331 /* to_c.cpp in Sources */,
+				7E2B250D189497AE004CC331 /* output_nested.cpp in Sources */,
+				7E2B2512189497AE004CC331 /* sassc++.cpp in Sources */,
+				7E2B2513189497AE004CC331 /* source_map.cpp in Sources */,
+				7E2B250C189497AE004CC331 /* output_compressed.cpp in Sources */,
+				7E2B2511189497AE004CC331 /* sass_interface.cpp in Sources */,
+				7E2B24FE189497AE004CC331 /* constants.cpp in Sources */,
+				7E2B24FC189497AE004CC331 /* base64vlq.cpp in Sources */,
+				7E2B2503189497AE004CC331 /* error_handling.cpp in Sources */,
+				7E2B2507189497AE004CC331 /* extend.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C167EFE841241C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB913B08733D840010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = "$(HOME)/Library/Application Support/Coda/PlugIns";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sass_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "";
+				PRODUCT_NAME = Sass;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = codaplugin;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		1DEB913C08733D840010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = "$(HOME)/Library/Application Support/Coda/PlugIns";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sass_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "";
+				PRODUCT_NAME = Sass;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = codaplugin;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		1DEB913F08733D840010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1DEB914008733D840010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Sass" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB913B08733D840010E9CD /* Debug */,
+				1DEB913C08733D840010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Sass" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB913F08733D840010E9CD /* Debug */,
+				1DEB914008733D840010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
+}
