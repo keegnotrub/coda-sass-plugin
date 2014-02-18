@@ -10,6 +10,9 @@ To Install, unzip the latest [Sass.codaplugin.zip](https://github.com/keegnotrub
 
 ## Changelog
 
+Version 2.0.1
+- Added pereferences dialog to set output style (nested or compressed) as well as setting debug information (source maps supported!)
+
 Version 2.0.0
 - Removed dependency on Ruby by using libsass for compiling
 - Removed need for specifying css directory - it will automatically find it now
