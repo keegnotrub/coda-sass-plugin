@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E1ADAB118B1BDC500055CF5 /* EGPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E1ADAAF18B1BDC500055CF5 /* EGPreferencesController.m */; };
+		7E1ADAB218B1BDC500055CF5 /* EGPreferencesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7E1ADAB018B1BDC500055CF5 /* EGPreferencesController.xib */; };
 		7E2B24FB189497AE004CC331 /* ast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24B9189497AD004CC331 /* ast.cpp */; };
 		7E2B24FC189497AE004CC331 /* base64vlq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24BF189497AD004CC331 /* base64vlq.cpp */; };
 		7E2B24FD189497AE004CC331 /* bind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24C1189497AD004CC331 /* bind.cpp */; };
@@ -34,6 +36,7 @@
 		7E2B2514189497AE004CC331 /* to_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F2189497AE004CC331 /* to_c.cpp */; };
 		7E2B2515189497AE004CC331 /* to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F4189497AE004CC331 /* to_string.cpp */; };
 		7E2B2516189497AE004CC331 /* units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F7189497AE004CC331 /* units.cpp */; };
+		7E3BF26F18B313FC00683617 /* sass-lang.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BF26E18B313FC00683617 /* sass-lang.png */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		F163D8F50C67D694000A99F5 /* EGSassPlugIn.m in Sources */ = {isa = PBXBuildFile; fileRef = F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */; };
@@ -46,6 +49,9 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* Sass_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sass_Prefix.pch; sourceTree = "<group>"; };
+		7E1ADAAE18B1BDC500055CF5 /* EGPreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGPreferencesController.h; sourceTree = "<group>"; };
+		7E1ADAAF18B1BDC500055CF5 /* EGPreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGPreferencesController.m; sourceTree = "<group>"; };
+		7E1ADAB018B1BDC500055CF5 /* EGPreferencesController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EGPreferencesController.xib; sourceTree = "<group>"; };
 		7E2B24B9189497AD004CC331 /* ast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cpp; sourceTree = "<group>"; };
 		7E2B24BA189497AD004CC331 /* ast.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast.hpp; sourceTree = "<group>"; };
 		7E2B24BB189497AD004CC331 /* ast_def_macros.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast_def_macros.hpp; sourceTree = "<group>"; };
@@ -109,6 +115,7 @@
 		7E2B24F6189497AE004CC331 /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
 		7E2B24F7189497AE004CC331 /* units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = units.cpp; sourceTree = "<group>"; };
 		7E2B24F8189497AE004CC331 /* units.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = units.hpp; sourceTree = "<group>"; };
+		7E3BF26E18B313FC00683617 /* sass-lang.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sass-lang.png"; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Sass.codaplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sass.codaplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -152,6 +159,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7E3BF26E18B313FC00683617 /* sass-lang.png */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
 			);
@@ -165,6 +173,9 @@
 				072855B614842DEB00B45937 /* CodaPlugInsController.h */,
 				F163D8F30C67D694000A99F5 /* EGSassPlugIn.h */,
 				F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */,
+				7E1ADAAE18B1BDC500055CF5 /* EGPreferencesController.h */,
+				7E1ADAAF18B1BDC500055CF5 /* EGPreferencesController.m */,
+				7E1ADAB018B1BDC500055CF5 /* EGPreferencesController.xib */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -327,7 +338,9 @@
 			files = (
 				7E2B250B189497AE004CC331 /* LICENSE in Resources */,
 				7E2B2506189497AE004CC331 /* extconf.rb in Resources */,
+				7E1ADAB218B1BDC500055CF5 /* EGPreferencesController.xib in Resources */,
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
+				7E3BF26F18B313FC00683617 /* sass-lang.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +385,7 @@
 				7E2B2500189497AE004CC331 /* contextualize.cpp in Sources */,
 				7E2B2514189497AE004CC331 /* to_c.cpp in Sources */,
 				7E2B250D189497AE004CC331 /* output_nested.cpp in Sources */,
+				7E1ADAB118B1BDC500055CF5 /* EGPreferencesController.m in Sources */,
 				7E2B2512189497AE004CC331 /* sassc++.cpp in Sources */,
 				7E2B2513189497AE004CC331 /* source_map.cpp in Sources */,
 				7E2B250C189497AE004CC331 /* output_compressed.cpp in Sources */,

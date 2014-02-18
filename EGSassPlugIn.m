@@ -16,6 +16,7 @@
 //
 
 #import "EGSassPlugIn.h"
+#import "EGPreferencesController.h"
 #import "CodaPlugInsController.h"
 
 #include <glob.h>
@@ -45,6 +46,8 @@
 	{
 		controller = inController;
 		
+		[controller registerActionWithTitle:@"Sass Preferences…" target:self selector:@selector(openSassPreferences:)];
+		
 		// CodaDocumentDidSaveNotification was derived by observing notifications being sent in Coda.
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(codaDocumentSavedNotification:) name:@"CodaDocumentDidSaveNotification" object:nil];
 	}
@@ -55,6 +58,14 @@
 {
 	return @"Sass";
 }
+
+- (IBAction)openSassPreferences:(id)sender
+{
+	EGPreferencesController *prefs = [[EGPreferencesController alloc] init];
+	[prefs runModal];
+	[prefs release];
+}
+
 
 - (void)codaDocumentSavedNotification:(NSNotification*)notification
 {
@@ -189,9 +200,16 @@
 		return;
 	}
 	
+	NSString *mapFile = [[cssFile stringByDeletingPathExtension] stringByAppendingPathExtension:@"map"];
+
 	struct sass_options options;
-	options.output_style = SASS_STYLE_NESTED;
-	options.source_comments = 0;
+	
+	NSInteger outputStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_OUTPUT_STYLE];
+	options.output_style = outputStyle;
+
+	NSInteger debugStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_DEBUG_STYLE];
+	options.source_comments = debugStyle;
+	
 	options.image_path = "images";
 	options.include_paths = "";
 	
@@ -200,9 +218,15 @@
 	ctx->options = options;
 	ctx->input_path = [scssFile UTF8String];
 	
+	if (options.source_comments == SASS_SOURCE_COMMENTS_MAP)
+	{
+		ctx->source_map_file = (char*)[mapFile UTF8String];
+	}
+	
 	sass_compile_file(ctx);
 	
-	if (ctx->error_status) {
+	if (ctx->error_status)
+	{
 		NSString *error = [NSString stringWithUTF8String:ctx->error_message];
 		NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Sass could not be completed.",@"Sass could not be completed.")
 										 defaultButton:NSLocalizedString(@"OK",@"OK")
@@ -212,9 +236,16 @@
 		[alert runModal];
 	}
 	
-	if (!ctx->error_status && ctx->output_string) {
-		NSString *result = [NSString stringWithUTF8String:ctx->output_string];
-		[result writeToFile:cssFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+	if (!ctx->error_status && ctx->output_string)
+	{
+		NSString *cssResult = [NSString stringWithUTF8String:ctx->output_string];
+		[cssResult writeToFile:cssFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		
+		if (ctx->source_map_string)
+		{
+			NSString *mapResult = [NSString stringWithUTF8String:ctx->source_map_string];
+			[mapResult writeToFile:mapFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+		}
 	}
 	
 	sass_free_file_context(ctx);
