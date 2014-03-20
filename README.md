@@ -11,7 +11,7 @@ To Install, unzip the latest [Sass.codaplugin.zip](https://github.com/keegnotrub
 ## Changelog
 
 Version 2.0.2
-- Added Bourbon 3.1.8, Bourbon Neat 1.5.0, and Foundation 5.2.1 (see [Wiki](https://github.com/keegnotrub/coda-sass-plugin/wiki/Included-Sass-Libraries)
+- Added Bourbon 3.1.8, Bourbon Neat 1.5.0, and Foundation 5.2.1 (see [Wiki](https://github.com/keegnotrub/coda-sass-plugin/wiki/Included-Sass-Libraries))
 
 Version 2.0.1
 - Added pereferences dialog to set output style (nested or compressed) as well as setting debug information (source maps supported!)
