@@ -23,7 +23,7 @@
 #include "libsass/sass_interface.h"
 
 @interface ERSassPlugIn ()
-- (id)initWithController:(CodaPlugInsController*)inController;
+- (id)initWithController:(CodaPlugInsController*)inController resourcePath:(NSString*)path;
 @end
 
 @implementation ERSassPlugIn
@@ -31,20 +31,21 @@
 // Coda 2.0 and lower
 - (id)initWithPlugInController:(CodaPlugInsController*)aController bundle:(NSBundle*)aBundle
 {
-	return [self initWithController:aController];
+	return [self initWithController:aController resourcePath:[aBundle resourcePath]];
 }
 
 // Coda 2.0.1 and higher
 - (id)initWithPlugInController:(CodaPlugInsController*)aController plugInBundle:(NSObject <CodaPlugInBundle> *)plugInBundle
 {
-	return [self initWithController:aController];
+	return [self initWithController:aController resourcePath:[plugInBundle resourcePath]];
 }
 
-- (id)initWithController:(CodaPlugInsController *)inController
+- (id)initWithController:(CodaPlugInsController *)inController resourcePath:(NSString*)path
 {
 	if ((self = [super init]) != nil)
 	{
 		controller = inController;
+		resourcePath = [path copy];
 		
 		[controller registerActionWithTitle:@"Sass Preferences…" target:self selector:@selector(openSassPreferences:)];
 		
@@ -211,7 +212,7 @@
 	options.source_comments = debugStyle;
 	
 	options.image_path = "images";
-	options.include_paths = "";
+	options.include_paths = [[resourcePath stringByAppendingPathComponent:@"scss"] UTF8String];
 	
 	struct sass_file_context *ctx = sass_new_file_context();
 	

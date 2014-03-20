@@ -23,6 +23,7 @@
 @interface ERSassPlugIn : NSObject<CodaPlugIn>
 {
 	CodaPlugInsController *controller;
+	NSString *resourcePath;
 }
 
 @end

@@ -37,6 +37,7 @@
 		7E2B2515189497AE004CC331 /* to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F4189497AE004CC331 /* to_string.cpp */; };
 		7E2B2516189497AE004CC331 /* units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E2B24F7189497AE004CC331 /* units.cpp */; };
 		7E3BF26F18B313FC00683617 /* sass-lang.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BF26E18B313FC00683617 /* sass-lang.png */; };
+		7EDFA14218DB6542006EC8F5 /* scss in Resources */ = {isa = PBXBuildFile; fileRef = 7EDFA14118DB6542006EC8F5 /* scss */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		F163D8F50C67D694000A99F5 /* EGSassPlugIn.m in Sources */ = {isa = PBXBuildFile; fileRef = F163D8F40C67D694000A99F5 /* EGSassPlugIn.m */; };
@@ -116,6 +117,7 @@
 		7E2B24F7189497AE004CC331 /* units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = units.cpp; sourceTree = "<group>"; };
 		7E2B24F8189497AE004CC331 /* units.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = units.hpp; sourceTree = "<group>"; };
 		7E3BF26E18B313FC00683617 /* sass-lang.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sass-lang.png"; sourceTree = "<group>"; };
+		7EDFA14118DB6542006EC8F5 /* scss */ = {isa = PBXFileReference; lastKnownFileType = folder; path = scss; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Sass.codaplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sass.codaplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -159,6 +161,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7EDFA14118DB6542006EC8F5 /* scss */,
 				7E3BF26E18B313FC00683617 /* sass-lang.png */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
@@ -340,6 +343,7 @@
 				7E2B2506189497AE004CC331 /* extconf.rb in Resources */,
 				7E1ADAB218B1BDC500055CF5 /* EGPreferencesController.xib in Resources */,
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
+				7EDFA14218DB6542006EC8F5 /* scss in Resources */,
 				7E3BF26F18B313FC00683617 /* sass-lang.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
