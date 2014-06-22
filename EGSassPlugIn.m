@@ -55,6 +55,12 @@
 	return self;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
 - (NSString*)name
 {
 	return @"Sass";
