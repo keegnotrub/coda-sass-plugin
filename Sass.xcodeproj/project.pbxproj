@@ -434,7 +434,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = NO;
-				DSTROOT = "$(HOME)/Library/Application Support/Coda/PlugIns";
+				DSTROOT = "$(HOME)/Library/Application Support/Coda 2/Plug-Ins";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -454,7 +454,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEPLOYMENT_LOCATION = NO;
-				DSTROOT = "$(HOME)/Library/Application Support/Coda/PlugIns";
+				DSTROOT = "$(HOME)/Library/Application Support/Coda 2/Plug-Ins";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
