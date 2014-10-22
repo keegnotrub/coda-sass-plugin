@@ -22,10 +22,12 @@
 #include "eval.hpp"
 #include "contextualize.hpp"
 #include "extend.hpp"
+#include "remove_placeholders.hpp"
 #include "copy_c_str.hpp"
 #include "color_names.hpp"
 #include "functions.hpp"
 #include "backtrace.hpp"
+#include "sass2scss.h"
 
 #ifndef SASS_PRELEXER
 #include "prelexer.hpp"
@@ -38,26 +40,30 @@
 
 namespace Sass {
   using namespace Constants;
+  using namespace File;
   using std::cerr;
   using std::endl;
 
   Context::Context(Context::Data initializers)
   : mem(Memory_Manager<AST_Node>()),
-    source_c_str    (initializers.source_c_str()),
-    sources         (vector<const char*>()),
-    include_paths   (initializers.include_paths()),
-    queue           (vector<pair<string, const char*> >()),
-    style_sheets    (map<string, Block*>()),
-    source_map(File::base_name(initializers.output_path())),
-    image_path      (initializers.image_path()),
-    source_comments (initializers.source_comments()),
-    source_maps     (initializers.source_maps()),
-    output_style    (initializers.output_style()),
-    source_map_file (initializers.source_map_file()),
-    names_to_colors (map<string, Color*>()),
-    colors_to_names (map<int, string>()),
-    extensions(multimap<Compound_Selector, Complex_Selector*>()),
-    subset_map(Subset_Map<string, pair<Complex_Selector*, Compound_Selector*> >())
+    source_c_str            (initializers.source_c_str()),
+    sources                 (vector<const char*>()),
+    include_paths           (initializers.include_paths()),
+    queue                   (vector<pair<string, const char*> >()),
+    style_sheets            (map<string, Block*>()),
+    source_map              (resolve_relative_path(initializers.output_path(), initializers.source_map_file(), get_cwd())),
+    c_functions             (vector<Sass_C_Function_Descriptor>()),
+    image_path              (initializers.image_path()),
+    output_path             (make_canonical_path(initializers.output_path())),
+    source_comments         (initializers.source_comments()),
+    output_style            (initializers.output_style()),
+    source_map_file         (make_canonical_path(initializers.source_map_file())),
+    omit_source_map_url     (initializers.omit_source_map_url()),
+    is_indented_syntax_src  (initializers.is_indented_syntax_src()),
+    names_to_colors         (map<string, Color*>()),
+    colors_to_names         (map<int, string>()),
+    precision               (initializers.precision()),
+    subset_map              (Subset_Map<string, pair<Complex_Selector*, Compound_Selector*> >())
   {
     cwd = get_cwd();
 
@@ -70,7 +76,7 @@ namespace Sass {
     if (!entry_point.empty()) {
       string result(add_file(entry_point));
       if (result.empty()) {
-        throw entry_point;
+        throw "File to read not found or unreadable: " + entry_point;
       }
     }
   }
@@ -143,6 +149,7 @@ namespace Sass {
     using namespace File;
     char* contents = 0;
     string real_path;
+    path = make_canonical_path(path);
     for (size_t i = 0, S = include_paths.size(); i < S; ++i) {
       string full_path(join_paths(include_paths[i], path));
       included_files.push_back(full_path);
@@ -165,6 +172,7 @@ namespace Sass {
     using namespace File;
     char* contents = 0;
     string real_path;
+    rel_filepath = make_canonical_path(rel_filepath);
     string full_path(join_paths(dir, rel_filepath));
     if (style_sheets.count(full_path)) return full_path;
     contents = resolve_and_load(full_path, real_path);
@@ -211,6 +219,9 @@ namespace Sass {
     Env tge;
     Backtrace backtrace(0, "", Position(), "");
     register_built_in_functions(*this, &tge);
+    for (size_t i = 0, S = c_functions.size(); i < S; ++i) {
+    	register_c_function(*this, &tge, c_functions[i]);
+    }
     Eval eval(*this, &tge, &backtrace);
     Contextualize contextualize(*this, &eval, &tge, &backtrace);
     Expand expand(*this, &eval, &contextualize, &tge, &backtrace);
@@ -218,17 +229,23 @@ namespace Sass {
     // Output_Nested output_nested(*this);
 
     root = root->perform(&expand)->block();
-    if (extensions.size()) {
-      Extend extend(*this, extensions, subset_map, &backtrace);
+    if (!subset_map.empty()) {
+      Extend extend(*this, subset_map);
       root->perform(&extend);
     }
+
+    Remove_Placeholders remove_placeholders(*this);
+    root->perform(&remove_placeholders);
+
     char* result = 0;
     switch (output_style) {
       case COMPRESSED: {
         Output_Compressed output_compressed(this);
         root->perform(&output_compressed);
         string output = output_compressed.get_buffer();
-        if (source_maps) output += format_source_mapping_url(source_map_file);
+        if (source_map_file != "" && !omit_source_map_url) {
+          output += format_source_mapping_url(source_map_file);
+        }
         result = copy_c_str(output.c_str());
       } break;
 
@@ -236,7 +253,9 @@ namespace Sass {
         Output_Nested output_nested(source_comments, this);
         root->perform(&output_nested);
         string output = output_nested.get_buffer();
-        if (source_maps) output += "\n" + format_source_mapping_url(source_map_file);
+        if (source_map_file != "" && !omit_source_map_url) {
+          output += "\n" + format_source_mapping_url(source_map_file);
+        }
         result = copy_c_str(output.c_str());
 
       } break;
@@ -247,23 +266,35 @@ namespace Sass {
 
   string Context::format_source_mapping_url(const string& file) const
   {
-    return "/*# sourceMappingURL=" + File::base_name(file) + " */";
+    return "/*# sourceMappingURL=" + resolve_relative_path(file, output_path, cwd) + " */";
   }
 
   char* Context::generate_source_map()
   {
-    if (!source_maps) return 0;
+    if (source_map_file == "") return 0;
     char* result = 0;
     string map = source_map.generate_source_map();
     result = copy_c_str(map.c_str());
     return result;
   }
 
-  char* Context::compile_string()
+  // allow to optionally overwrite the input path
+  // default argument for input_path is string("stdin")
+  // usefull to influence the source-map generating etc.
+  char* Context::compile_string(const string& input_path)
   {
     if (!source_c_str) return 0;
     queue.clear();
-    queue.push_back(make_pair("source string", source_c_str));
+    if(is_indented_syntax_src) {
+      char * contents = sass2scss(source_c_str, SASS2SCSS_PRETTIFY_1);
+      queue.push_back(make_pair(input_path, contents));
+      source_map.files.push_back(input_path);
+      char * compiled = compile_file();
+      delete[] contents;
+      return compiled;
+    }
+    queue.push_back(make_pair(input_path, source_c_str));
+    source_map.files.push_back(input_path);
     return compile_file();
   }
 
@@ -279,6 +310,10 @@ namespace Sass {
     const size_t wd_len = 1024;
     char wd[wd_len];
     string cwd = getcwd(wd, wd_len);
+#ifdef _WIN32
+    //convert backslashes to forward slashes
+    replace(cwd.begin(), cwd.end(), '\\', '/');
+#endif
     if (cwd[cwd.length() - 1] != '/') cwd += '/';
     return cwd;
   }
@@ -316,7 +351,7 @@ namespace Sass {
   {
     using namespace Functions;
     // RGB Functions
-    register_function(ctx, rgb_sig,  rgb, env);
+    register_function(ctx, rgb_sig, rgb, env);
     register_overload_stub(ctx, "rgba", env);
     register_function(ctx, rgba_4_sig, rgba_4, 4, env);
     register_function(ctx, rgba_2_sig, rgba_2, 2, env);
@@ -353,6 +388,12 @@ namespace Sass {
     // String Functions
     register_function(ctx, unquote_sig, sass_unquote, env);
     register_function(ctx, quote_sig, sass_quote, env);
+    register_function(ctx, str_length_sig, str_length, env);
+    register_function(ctx, str_insert_sig, str_insert, env);
+    register_function(ctx, str_index_sig, str_index, env);
+    register_function(ctx, str_slice_sig, str_slice, env);
+    register_function(ctx, to_upper_case_sig, to_upper_case, env);
+    register_function(ctx, to_lower_case_sig, to_lower_case, env);
     // Number Functions
     register_function(ctx, percentage_sig, percentage, env);
     register_function(ctx, round_sig, round, env);
@@ -369,11 +410,25 @@ namespace Sass {
     register_function(ctx, append_sig, append, env);
     register_function(ctx, compact_sig, compact, env);
     register_function(ctx, zip_sig, zip, env);
+    register_function(ctx, list_separator_sig, list_separator, env);
+    // Map Functions
+    register_function(ctx, map_get_sig, map_get, env);
+    register_function(ctx, map_merge_sig, map_merge, env);
+    register_function(ctx, map_remove_sig, map_remove, env);
+    register_function(ctx, map_keys_sig, map_keys, env);
+    register_function(ctx, map_values_sig, map_values, env);
+    register_function(ctx, map_has_key_sig, map_has_key, env);
+    register_function(ctx, keywords_sig, keywords, env);
     // Introspection Functions
     register_function(ctx, type_of_sig, type_of, env);
     register_function(ctx, unit_sig, unit, env);
     register_function(ctx, unitless_sig, unitless, env);
     register_function(ctx, comparable_sig, comparable, env);
+    register_function(ctx, variable_exists_sig, variable_exists, env);
+    register_function(ctx, global_variable_exists_sig, global_variable_exists, env);
+    register_function(ctx, function_exists_sig, function_exists, env);
+    register_function(ctx, mixin_exists_sig, mixin_exists, env);
+    register_function(ctx, call_sig, call, env);
     // Boolean Functions
     register_function(ctx, not_sig, sass_not, env);
     register_function(ctx, if_sig, sass_if, env);
@@ -390,7 +445,7 @@ namespace Sass {
   }
   void register_c_function(Context& ctx, Env* env, Sass_C_Function_Descriptor descr)
   {
-    Definition* def = make_c_function(descr.signature, descr.function, ctx);
+    Definition* def = make_c_function(descr.signature, descr.function, descr.cookie, ctx);
     def->environment(env);
     (*env)[def->name() + "[f]"] = def;
   }

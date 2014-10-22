@@ -78,6 +78,7 @@ namespace Sass {
 
   void Inspect::operator()(Declaration* dec)
   {
+    if (dec->value()->concrete_type() == Expression::NULL_VAL) return;
     if (ctx) ctx->source_map.add_mapping(dec->property());
     dec->property()->perform(this);
     append_to_buffer(": ");
@@ -287,30 +288,30 @@ namespace Sass {
   }
 
   // helper functions for serializing numbers
-  string frac_to_string(double f, size_t p) {
-    stringstream ss;
-    ss.setf(ios::fixed, ios::floatfield);
-    ss.precision(p);
-    ss << f;
-    string result(ss.str().substr(f < 0 ? 2 : 1));
-    size_t i = result.size() - 1;
-    while (result[i] == '0') --i;
-    result = result.substr(0, i+1);
-    return result;
-  }
-  string double_to_string(double d, size_t p) {
-    stringstream ss;
-    double ipart;
-    double fpart = std::modf(d, &ipart);
-    ss << ipart;
-    if (fpart != 0) ss << frac_to_string(fpart, 5);
-    return ss.str();
-  }
+  // string frac_to_string(double f, size_t p) {
+  //   stringstream ss;
+  //   ss.setf(ios::fixed, ios::floatfield);
+  //   ss.precision(p);
+  //   ss << f;
+  //   string result(ss.str().substr(f < 0 ? 2 : 1));
+  //   size_t i = result.size() - 1;
+  //   while (result[i] == '0') --i;
+  //   result = result.substr(0, i+1);
+  //   return result;
+  // }
+  // string double_to_string(double d, size_t p) {
+  //   stringstream ss;
+  //   double ipart;
+  //   double fpart = std::modf(d, &ipart);
+  //   ss << ipart;
+  //   if (fpart != 0) ss << frac_to_string(fpart, 5);
+  //   return ss.str();
+  // }
 
   void Inspect::operator()(Number* n)
   {
     stringstream ss;
-    ss.precision(5);
+    ss.precision(ctx ? ctx->precision : 5);
     ss << fixed << n->value();
     string d(ss.str());
     for (size_t i = d.length()-1; d[i] == '0'; --i) {
@@ -320,7 +321,7 @@ namespace Sass {
     if (n->numerator_units().size() > 1 || n->denominator_units().size() > 0) {
       error(d + n->unit() + " is not a valid CSS value", n->path(), n->position());
     }
-    append_to_buffer(d);
+    append_to_buffer(d == "-0" ? "0" : d);
     append_to_buffer(n->unit());
   }
 
@@ -335,15 +336,10 @@ namespace Sass {
   void Inspect::operator()(Color* c)
   {
     stringstream ss;
-    double r = cap_channel<0xff>(c->r());
-    double g = cap_channel<0xff>(c->g());
-    double b = cap_channel<0xff>(c->b());
+    double r = round(cap_channel<0xff>(c->r()));
+    double g = round(cap_channel<0xff>(c->g()));
+    double b = round(cap_channel<0xff>(c->b()));
     double a = cap_channel<1>   (c->a());
-
-    // if (a >= 1 && ctx.colors_to_names.count(numval)) {
-    //   ss << ctx.colors_to_names[numval];
-    // }
-    // else
 
     // retain the originally specified color definition if unchanged
     if (!c->disp().empty()) {
@@ -360,9 +356,9 @@ namespace Sass {
       else {
         // otherwise output the hex triplet
         ss << '#' << setw(2) << setfill('0');
-        ss << hex << setw(2) << static_cast<unsigned long>(floor(r+0.5));
-        ss << hex << setw(2) << static_cast<unsigned long>(floor(g+0.5));
-        ss << hex << setw(2) << static_cast<unsigned long>(floor(b+0.5));
+        ss << hex << setw(2) << static_cast<unsigned long>(r);
+        ss << hex << setw(2) << static_cast<unsigned long>(g);
+        ss << hex << setw(2) << static_cast<unsigned long>(b);
       }
     }
     else {
@@ -525,7 +521,10 @@ namespace Sass {
     append_to_buffer(s->name());
     if (!s->matcher().empty()) {
       append_to_buffer(s->matcher());
-      append_to_buffer(s->value());
+      if (s->value()) {
+        s->value()->perform(this);
+      }
+      // append_to_buffer(s->value());
     }
     append_to_buffer("]");
   }
@@ -540,10 +539,10 @@ namespace Sass {
     }
   }
 
-  void Inspect::operator()(Negated_Selector* s)
+  void Inspect::operator()(Wrapped_Selector* s)
   {
     if (ctx) ctx->source_map.add_mapping(s);
-    append_to_buffer(":not(");
+    append_to_buffer(s->name());
     s->selector()->perform(this);
     append_to_buffer(")");
   }

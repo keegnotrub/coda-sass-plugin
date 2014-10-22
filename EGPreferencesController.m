@@ -8,52 +8,58 @@
 
 #import "EGPreferencesController.h"
 
+NSString *const EG_PREF_OUTPUT_STYLE = @"EGSassPlugin_OutputStyle";
+NSString *const EG_PREF_DEBUG_STYLE = @"EGSassPlugin_DebugStyle";
+
+NSInteger const EG_SASS_SOURCE_COMMENTS_NONE = 0;
+NSInteger const EG_SASS_SOURCE_COMMENTS_DEBUG = 1;
+NSInteger const EG_SASS_SOURCE_COMMENTS_MAP = 2;
+
 @interface EGPreferencesController ()
+
 @end
 
 @implementation EGPreferencesController
 
-- (id)init
+- (instancetype)init
 {
-	if(self = [super initWithWindowNibName:@"EGPreferencesController"])
-	{
-	}
+    self = [super initWithWindowNibName:@"EGPreferencesController"];
+    
+    if (!self) {
+        return nil;
+    }
 	
 	return self;
 }
 
-- (BOOL)windowShouldClose:(id)sender
-{
-	NSInteger outputStyle = [outputStyleButton indexOfSelectedItem];
-	NSInteger debugStyle = [debugStyleButton indexOfSelectedItem];
-	
-	[[NSUserDefaults standardUserDefaults] setInteger:outputStyle forKey:EG_PREF_OUTPUT_STYLE];
-	[[NSUserDefaults standardUserDefaults] setInteger:debugStyle forKey:EG_PREF_DEBUG_STYLE];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-	
-	if (isModal)
-	{
-		[NSApp stopModal];
-		isModal = NO;
-	}
-	
-	return YES;
-}
-
-- (void)runModal
-{
-	isModal = YES;
-	[NSApp runModalForWindow:self.window];
-	[self.window orderOut:self];
-}
-
 - (void)windowDidLoad
 {
+    [super windowDidLoad];
+    
 	NSInteger outputStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_OUTPUT_STYLE];
 	NSInteger debugStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_DEBUG_STYLE];
 	
-	[outputStyleButton selectItemAtIndex:outputStyle];
-	[debugStyleButton selectItemAtIndex:debugStyle];
+	[self.outputStyleButton selectItemAtIndex:outputStyle];
+	[self.debugStyleButton selectItemAtIndex:debugStyle];
 }
+
+#pragma mark - IBAction
+
+- (IBAction)outputStyleChanged:(id)sender
+{
+    NSInteger outputStyle = [self.outputStyleButton indexOfSelectedItem];
+
+    [[NSUserDefaults standardUserDefaults] setInteger:outputStyle forKey:EG_PREF_OUTPUT_STYLE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (IBAction)debugStyleChanged:(id)sender
+{
+    NSInteger debugStyle = [self.debugStyleButton indexOfSelectedItem];
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:debugStyle forKey:EG_PREF_DEBUG_STYLE];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 
 @end

@@ -1,18 +1,9 @@
 //
-//	EGSassPlugIn.m
-//	Copyright ©2014 Ryan Krug. All rights reserved.
+//  EGSassPlugIn.m
+//  Sass
 //
-//	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
-//	files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
-//	modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
-//	Software is furnished to do so, subject to the following conditions:
+//  Created by Ryan Krug on 2/16/14.
 //
-//	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-//	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-//	LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-//	IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #import "EGSassPlugIn.h"
@@ -23,79 +14,60 @@
 #include "libsass/sass_interface.h"
 
 @interface ERSassPlugIn ()
-- (id)initWithController:(CodaPlugInsController*)inController resourcePath:(NSString*)path;
+@property (nonatomic, strong) CodaPlugInsController *controller;
+@property (nonatomic, strong) NSObject<CodaPlugInBundle> *plugInBundle;
+@property (nonatomic, strong) EGPreferencesController *preferencesController;
 @end
 
 @implementation ERSassPlugIn
 
-// Coda 2.0 and lower
-- (id)initWithPlugInController:(CodaPlugInsController*)aController bundle:(NSBundle*)aBundle
+- (instancetype)initWithPlugInController:(CodaPlugInsController*)aController
+                            plugInBundle:(NSObject <CodaPlugInBundle> *)aPlugInBundle
 {
-	return [self initWithController:aController resourcePath:[aBundle resourcePath]];
+    self = [super init];
+    
+    if (!self) {
+        return nil;
+    }
+    
+    _controller = aController;
+    _plugInBundle = aPlugInBundle;
+    
+    [_controller registerActionWithTitle:@"Sass Preferences…"
+                                  target:self
+                                selector:@selector(openSassPreferences:)];
+    
+    return self;
 }
 
-// Coda 2.0.1 and higher
-- (id)initWithPlugInController:(CodaPlugInsController*)aController plugInBundle:(NSObject <CodaPlugInBundle> *)plugInBundle
-{
-	return [self initWithController:aController resourcePath:[plugInBundle resourcePath]];
-}
-
-- (id)initWithController:(CodaPlugInsController *)inController resourcePath:(NSString*)path
-{
-	if ((self = [super init]) != nil)
-	{
-		controller = inController;
-		resourcePath = [path copy];
-		
-		[controller registerActionWithTitle:@"Sass Preferences…" target:self selector:@selector(openSassPreferences:)];
-		
-		// CodaDocumentDidSaveNotification was derived by observing notifications being sent in Coda.
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(codaDocumentSavedNotification:) name:@"CodaDocumentDidSaveNotification" object:nil];
-	}
-	return self;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
-}
+#pragma mark - CodaPlugIn
 
 - (NSString*)name
 {
 	return @"Sass";
 }
 
-- (IBAction)openSassPreferences:(id)sender
+- (void)textViewDidSave:(CodaTextView*)textView
 {
-	EGPreferencesController *prefs = [[EGPreferencesController alloc] init];
-	[prefs runModal];
-	[prefs release];
+    NSString *file = [textView path];
+    if ([self isFileScss:file]) {
+        for (NSString* scssFile in [self scssFilesForScssFile:file]) {
+            [self generateCssForScssFile:scssFile];
+        }
+    }
 }
 
+#pragma mark - UI
 
-- (void)codaDocumentSavedNotification:(NSNotification*)notification
+- (void)openSassPreferences:(id)sender
 {
-	// The object for CodaDocumentDidSaveNotification is currently a subclass of NSDocument.
-	NSDocument *document = [notification object];
-	if (document == nil || ![document isKindOfClass:[NSDocument class]])
-	{
-		return;
-	}
-	
-	NSURL *documentURL = [document fileURL];
-	if ([documentURL isFileURL])
-	{
-		NSString *file = [[documentURL path] stringByExpandingTildeInPath];
-		if ([self isFileScss:file])
-		{
-			for (NSString* scssFile in [self scssFilesForScssFile:file])
-			{
-				[self generateCssForScssFile:scssFile];
-			}
-		}
-	}
+    if (!self.preferencesController) {
+        self.preferencesController = [[EGPreferencesController alloc] init];
+    }
+    [self.preferencesController showWindow:self];
 }
+
+#pragma mark - libsass
 
 - (BOOL)isFileScss:(NSString*)file
 {
@@ -115,17 +87,14 @@
 	glob_t gt;
 	const char *cPattern = [fullPattern UTF8String];
 	NSMutableArray *paths = [NSMutableArray array];
-	if (glob(cPattern, GLOB_NOSORT, NULL, &gt) == 0)
-	{
-		for (int i = 0; i < gt.gl_matchc; i++)
-		{
+	if (glob(cPattern, GLOB_NOSORT, NULL, &gt) == 0) {
+		for (int i = 0; i < gt.gl_matchc; i++) {
 			[paths addObject:[NSString stringWithUTF8String:gt.gl_pathv[i]]];
 		}
 	}
 	globfree(&gt);
 	
-	if ([paths count] == 0 && [[scssDirectory pathComponents] count] > 1)
-	{
+	if ([paths count] == 0 && [[scssDirectory pathComponents] count] > 1) {
 		return [self scssFilesForScssDirectory:[scssDirectory stringByDeletingLastPathComponent]];
 	}
 	
@@ -134,8 +103,7 @@
 
 - (NSArray*)scssFilesForScssFile:(NSString*)scssFile
 {
-	if (![self isScssFileScssPartial:scssFile])
-	{
+	if (![self isScssFileScssPartial:scssFile]) {
 		return [NSArray arrayWithObject:scssFile];
 	}
 	
@@ -150,18 +118,15 @@
 	glob_t gt;
 	const char *cPattern = [fullPattern UTF8String];
 	NSString *cssDirectory = nil;
-	if (glob(cPattern, GLOB_BRACE|GLOB_NOSORT, NULL, &gt) == 0)
-	{
-		for (int i = 0; i < gt.gl_matchc; i++)
-		{
+	if (glob(cPattern, GLOB_BRACE|GLOB_NOSORT, NULL, &gt) == 0) {
+		for (int i = 0; i < gt.gl_matchc; i++) {
 			cssDirectory = [NSString stringWithUTF8String:gt.gl_pathv[i]];
 			break;
 		}
 	}
 	globfree(&gt);
 	
-	if (cssDirectory == nil && [[scssDirectory pathComponents] count] > 1)
-	{
+	if (cssDirectory == nil && [[scssDirectory pathComponents] count] > 1) {
 		return [self cssDirectoryForScssDirectory:[scssDirectory stringByDeletingLastPathComponent]];
 	}
 	
@@ -180,12 +145,10 @@
 	
 	NSString *cssFile = [dir stringByAppendingPathComponent:cssFileName];
 	
-	if (![[NSFileManager defaultManager] fileExistsAtPath:cssFile])
-	{
+	if (![[NSFileManager defaultManager] fileExistsAtPath:cssFile]) {
 		NSString *cssDirectory = [self cssDirectoryForScssDirectory:dir];
 		
-		if (cssDirectory != nil)
-		{
+		if (cssDirectory != nil) {
 			cssFile = [cssDirectory stringByAppendingPathComponent:cssFileName];
 		}
 	}
@@ -196,17 +159,15 @@
 
 - (void)generateCssForScssFile:(NSString*)scssFile
 {
-	if (scssFile == nil)
-	{
+	if (scssFile == nil) {
 		return;
 	}
 	
 	NSString *cssFile = [self cssFileForScssFile:scssFile];
-	if (cssFile == nil)
-	{
+	if (cssFile == nil) {
 		return;
 	}
-	
+    
 	NSString *mapFile = [[cssFile stringByDeletingPathExtension] stringByAppendingPathExtension:@"map"];
 
 	struct sass_options options;
@@ -215,41 +176,46 @@
 	options.output_style = outputStyle;
 
 	NSInteger debugStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_DEBUG_STYLE];
-	options.source_comments = debugStyle;
-	
+    
+    if (debugStyle == EG_SASS_SOURCE_COMMENTS_DEBUG) {
+        options.source_comments = true;
+        options.omit_source_map_url = true;
+    }
+    else if (debugStyle == EG_SASS_SOURCE_COMMENTS_MAP) {
+        options.source_comments = false;
+        options.omit_source_map_url = false;
+        options.source_map_file = (char*)[mapFile UTF8String];
+    }
+    else {
+        options.source_comments = false;
+        options.omit_source_map_url = true;
+    }
+    
 	options.image_path = "images";
-	options.include_paths = [[resourcePath stringByAppendingPathComponent:@"scss"] UTF8String];
-	
+	options.include_paths = [[self.plugInBundle.resourcePath stringByAppendingPathComponent:@"scss"] UTF8String];
+    
 	struct sass_file_context *ctx = sass_new_file_context();
 	
 	ctx->options = options;
 	ctx->input_path = [scssFile UTF8String];
 	
-	if (options.source_comments == SASS_SOURCE_COMMENTS_MAP)
-	{
-		ctx->source_map_file = (char*)[mapFile UTF8String];
-	}
-	
 	sass_compile_file(ctx);
 	
-	if (ctx->error_status)
-	{
+	if (ctx->error_status) {
 		NSString *error = [NSString stringWithUTF8String:ctx->error_message];
-		NSAlert *alert = [NSAlert alertWithMessageText:NSLocalizedString(@"Sass could not be completed.",@"Sass could not be completed.")
-										 defaultButton:NSLocalizedString(@"OK",@"OK")
+		NSAlert *alert = [NSAlert alertWithMessageText:@"Sass could not be completed."
+										 defaultButton:@"OK"
 									   alternateButton:nil
 										   otherButton:nil
 							 informativeTextWithFormat:@"%@", error];
 		[alert runModal];
 	}
 	
-	if (!ctx->error_status && ctx->output_string)
-	{
+	if (!ctx->error_status && ctx->output_string) {
 		NSString *cssResult = [NSString stringWithUTF8String:ctx->output_string];
 		[cssResult writeToFile:cssFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		
-		if (ctx->source_map_string)
-		{
+		if (ctx->source_map_string) {
 			NSString *mapResult = [NSString stringWithUTF8String:ctx->source_map_string];
 			[mapResult writeToFile:mapFile atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 		}

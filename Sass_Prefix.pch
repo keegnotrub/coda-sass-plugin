@@ -5,6 +5,3 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
 #endif
-
-#define EG_PREF_OUTPUT_STYLE @"EGSassPlugin_OutputStyle"
-#define EG_PREF_DEBUG_STYLE @"EGSassPlugin_DebugStyle"

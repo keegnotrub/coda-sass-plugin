@@ -27,6 +27,7 @@ namespace Sass {
     extern const char while_kwd[]         = "@while";
     extern const char warn_kwd[]          = "@warn";
     extern const char default_kwd[]       = "default";
+    extern const char global_kwd[]        = "global";
     extern const char null_kwd[]          = "null";
     extern const char optional_kwd[]      = "optional";
 
@@ -54,19 +55,22 @@ namespace Sass {
     extern const char vendor_khtml_kwd[]    = "-khtml-";
 
     // css functions and keywords
-    extern const char charset_kwd[]    = "@charset";
-    extern const char media_kwd[]      = "@media";
-    extern const char keyframes_kwd[]  = "keyframes";
-    extern const char only_kwd[]       = "only";
-    extern const char rgb_kwd[]        = "rgb(";
-    extern const char url_kwd[]        = "url(";
-    extern const char image_url_kwd[]  = "image-url(";
-    extern const char important_kwd[]  = "important";
-    extern const char pseudo_not_kwd[] = ":not(";
-    extern const char even_kwd[]       = "even";
-    extern const char odd_kwd[]        = "odd";
-    extern const char progid_kwd[]     = "progid";
-    extern const char calc_kwd[]       = "calc(";
+    extern const char charset_kwd[]      = "@charset";
+    extern const char media_kwd[]        = "@media";
+    extern const char keyframes_kwd[]    = "keyframes";
+    extern const char only_kwd[]         = "only";
+    extern const char rgb_kwd[]          = "rgb(";
+    extern const char url_kwd[]          = "url(";
+    extern const char image_url_kwd[]    = "image-url(";
+    extern const char important_kwd[]    = "important";
+    extern const char pseudo_not_kwd[]   = ":not(";
+    extern const char even_kwd[]         = "even";
+    extern const char odd_kwd[]          = "odd";
+    extern const char progid_kwd[]       = "progid";
+    extern const char expression_kwd[]   = "expression";
+    extern const char calc_kwd[]         = "calc(";
+    extern const char moz_calc_kwd[]     = "-moz-calc(";
+    extern const char webkit_calc_kwd[]  = "-webkit-calc(";
 
     // css attribute-matching operators
     extern const char tilde_equal[]  = "~=";
@@ -111,6 +115,7 @@ namespace Sass {
     extern const char bool_name[]       = "bool";
     extern const char color_name[]      = "color";
     extern const char list_name[]       = "list";
+    extern const char map_name[]        = "map";
     extern const char arglist_name[]    = "arglist";
 
     // byte order marks

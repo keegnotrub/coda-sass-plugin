@@ -95,7 +95,7 @@ namespace Sass {
                                                 m->position(),
                                                 static_cast<List*>(media_queries),
                                                 m->block()->perform(this)->block());
-    mm->enclosing_selector(selector_stack.back());
+    mm->selector(selector_stack.back());
     return mm;
   }
 
@@ -141,9 +141,13 @@ namespace Sass {
     return 0;
   }
 
-  Statement* Expand::operator()(Import* i)
+  Statement* Expand::operator()(Import* imp)
   {
-    return i; // TODO: eval i->urls()
+    Import* result = new (ctx.mem) Import(imp->path(), imp->position());
+    for ( size_t i = 0, S = imp->urls().size(); i < S; ++i) {
+      result->urls().push_back(imp->urls()[i]->perform(eval->with(env, backtrace)));
+    }
+    return result;
   }
 
   Statement* Expand::operator()(Import_Stub* i)
@@ -267,7 +271,6 @@ namespace Sass {
     // { target_vec.push_back((*s)[i]->perform(&to_string)); }
 
     for (size_t i = 0, L = extender->length(); i < L; ++i) {
-      ctx.extensions.insert(make_pair(*s, (*extender)[i]));
       // let's test this out
       // cerr << "REGISTERING EXTENSION REQUEST: " << (*extender)[i]->perform(&to_string) << " <- " << s->perform(&to_string) << endl;
       ctx.subset_map.put(s->to_str_vec(), make_pair((*extender)[i], s));

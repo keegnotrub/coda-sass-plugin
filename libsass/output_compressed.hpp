@@ -14,6 +14,7 @@ namespace Sass {
     using Operation_CRTP<void, Output_Compressed>::operator();
 
     string buffer;
+    string rendered_imports;
     Context* ctx;
 
     void fallback_impl(AST_Node* n);
@@ -24,7 +25,7 @@ namespace Sass {
     Output_Compressed(Context* ctx = 0);
     virtual ~Output_Compressed();
 
-    string get_buffer() { return buffer; }
+    string get_buffer() { return rendered_imports + buffer; }
 
     // statements
     virtual void operator()(Block*);
@@ -34,7 +35,7 @@ namespace Sass {
     virtual void operator()(At_Rule*);
     virtual void operator()(Declaration*);
     // virtual void operator()(Assignment*);
-    // virtual void operator()(Import*);
+    virtual void operator()(Import*);
     // virtual void operator()(Import_Stub*);
     // virtual void operator()(Warning*);
     virtual void operator()(Comment*);
@@ -56,12 +57,13 @@ namespace Sass {
     // virtual void operator()(Variable*);
     // virtual void operator()(Textual*);
     // virtual void operator()(Number*);
-    // virtual void operator()(Color*);
+    virtual void operator()(Color*);
     // virtual void operator()(Boolean*);
     // virtual void operator()(String_Schema*);
     // virtual void operator()(String_Constant* x);
     // virtual void operator()(Media_Query*);
     virtual void operator()(Media_Query_Expression*);
+    virtual void operator()(Null*);
     // // parameters and arguments
     // virtual void operator()(Parameter*);
     // virtual void operator()(Parameters*);
@@ -75,7 +77,7 @@ namespace Sass {
     // virtual void operator()(Selector_Qualifier*);
     // virtual void operator()(Attribute_Selector*);
     // virtual void operator()(Pseudo_Selector*);
-    // virtual void operator()(Negated_Selector*);
+    // virtual void operator()(Wrapped_Selector*);
     // virtual void operator()(Compound_Selector*);
     virtual void operator()(Complex_Selector*);
     virtual void operator()(Selector_List*);
