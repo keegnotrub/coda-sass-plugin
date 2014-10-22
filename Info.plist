@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.7</string>
+	<key>CodaDescriptionString</key>
+	<string>Converts scss files into css files on save.</string>
+	<key>CodaAuthorString</key>
+	<string>Elbongurk LLC</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -22,7 +28,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>3.0.0</string>
-	<key>CodaPlugInSupportedAPIVersion</key>
+	<key>CodaPlugInMinimumAPIVersion</key>
 	<string>7</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Elbongurk LLC</string>
