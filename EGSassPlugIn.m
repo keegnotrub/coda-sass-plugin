@@ -170,7 +170,7 @@
     
 	NSString *mapFile = [[cssFile stringByDeletingPathExtension] stringByAppendingPathExtension:@"map"];
 
-	struct sass_options options;
+    struct sass_options options = { 0 };
 	
 	NSInteger outputStyle = [[NSUserDefaults standardUserDefaults] integerForKey:EG_PREF_OUTPUT_STYLE];
 	options.output_style = outputStyle;
