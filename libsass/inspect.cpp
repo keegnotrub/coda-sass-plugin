@@ -162,7 +162,11 @@ namespace Sass {
   void Inspect::operator()(Each* loop)
   {
     append_to_buffer("@each ");
-    append_to_buffer(loop->variable());
+    append_to_buffer(loop->variables()[0]);
+    for (size_t i = 1, L = loop->variables().size(); i < L; ++i) {
+      append_to_buffer(", ");
+      append_to_buffer(loop->variables()[i]);
+    }
     append_to_buffer(" in ");
     loop->list()->perform(this);
     loop->block()->perform(this);
@@ -627,7 +631,8 @@ namespace Sass {
   void Inspect::append_to_buffer(const string& text)
   {
     buffer += text;
-    if (ctx) ctx->source_map.update_column(text);
+    if (ctx && !ctx->_skip_source_map_update)
+      ctx->source_map.update_column(text);
   }
 
 }

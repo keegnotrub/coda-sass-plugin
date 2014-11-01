@@ -105,10 +105,14 @@ namespace Sass {
 
   Expression* Eval::operator()(Each* e)
   {
-    string variable(e->variable());
+    vector<string> variables(e->variables());
     Expression* expr = e->list()->perform(this);
     List* list = 0;
+    Map* map = 0;
     if (expr->concrete_type() != Expression::LIST) {
+      map = static_cast<Map*>(expr);
+    }
+    else if (expr->concrete_type() != Expression::LIST) {
       list = new (ctx.mem) List(expr->path(), expr->position(), 1, List::COMMA);
       *list << expr;
     }
@@ -116,15 +120,41 @@ namespace Sass {
       list = static_cast<List*>(expr);
     }
     Env new_env;
-    new_env[variable] = 0;
+    for (size_t i = 0, L = variables.size(); i < L; ++i) new_env[variables[i]] = 0;
     new_env.link(env);
     env = &new_env;
     Block* body = e->block();
     Expression* val = 0;
-    for (size_t i = 0, L = list->length(); i < L; ++i) {
-      (*env)[variable] = (*list)[i];
-      val = body->perform(this);
-      if (val) break;
+
+    if (map) {
+      for (auto key : map->keys()) {
+        (*env)[variables[0]] = key;
+        (*env)[variables[1]] = map->at(key);
+        val = body->perform(this);
+        if (val) break;
+      }
+    }
+    else {
+      for (size_t i = 0, L = list->length(); i < L; ++i) {
+        List* variable = 0;
+        if ((*list)[i]->concrete_type() != Expression::LIST || variables.size() == 1) {
+          variable = new (ctx.mem) List((*list)[i]->path(), (*list)[i]->position(), 1, List::COMMA);
+          *variable << (*list)[i];
+        }
+        else {
+          variable = static_cast<List*>((*list)[i]);
+        }
+        for (size_t j = 0, K = variables.size(); j < K; ++j) {
+          if (j < variable->length()) {
+            (*env)[variables[j]] = (*variable)[j];
+          }
+          else {
+            (*env)[variables[j]] = new (ctx.mem) Null(expr->path(), expr->position());
+          }
+          val = body->perform(this);
+          if (val) break;
+        }
+      }
     }
     env = new_env.parent();
     return val;
@@ -161,6 +191,7 @@ namespace Sass {
 
   Expression* Eval::operator()(List* l)
   {
+    if (l->is_expanded()) return l;
     List* ll = new (ctx.mem) List(l->path(),
                                   l->position(),
                                   l->length(),
@@ -169,21 +200,20 @@ namespace Sass {
     for (size_t i = 0, L = l->length(); i < L; ++i) {
       *ll << (*l)[i]->perform(this);
     }
+    ll->is_expanded(true);
     return ll;
   }
 
   Expression* Eval::operator()(Map* m)
   {
+    if (m->is_expanded()) return m;
     Map* mm = new (ctx.mem) Map(m->path(),
                                   m->position(),
                                   m->length());
-    for (size_t i = 0, L = m->length(); i < L; ++i) {
-      KeyValuePair* kvp = new (ctx.mem) KeyValuePair(m->path(),
-                                                      m->position(),
-                                                      (*m)[i]->key()->perform(this),
-                                                      (*m)[i]->value()->perform(this));
-      *mm << kvp;
+    for (auto key : m->keys()) {
+      *mm << std::make_pair(key->perform(this), m->at(key)->perform(this));
     }
+    mm->is_expanded(true);
     return mm;
   }
 
@@ -360,13 +390,15 @@ namespace Sass {
       backtrace = &here;
 
       To_C to_c;
-      Sass_Value c_val = c_func(args->perform(&to_c), def->cookie());
+      union Sass_Value c_args = args->perform(&to_c);
+      Sass_Value c_val = c_func(c_args, def->cookie());
       if (c_val.unknown.tag == SASS_ERROR) {
         error("error in C function " + c->name() + ": " + c_val.error.message, c->path(), c->position(), backtrace);
       }
       result = cval_to_astnode(c_val, ctx, backtrace, c->path(), c->position());
 
       backtrace = here.parent;
+      free_sass_value(c_val);
       env = old_env;
     }
     // else it's an overloaded native function; resolve it
@@ -498,7 +530,9 @@ namespace Sass {
   Expression* Eval::operator()(String_Schema* s)
   {
     string acc;
-    To_String to_string(0);
+    ctx._skip_source_map_update = true;
+    To_String to_string(&ctx);
+    ctx._skip_source_map_update = false;
     for (size_t i = 0, L = s->length(); i < L; ++i) {
       string chunk((*s)[i]->perform(this)->perform(&to_string));
       if (((s->quote_mark() && is_quoted(chunk)) || !s->quote_mark()) && (*s)[i]->is_interpolant()) { // some redundancy in that test
@@ -648,10 +682,8 @@ namespace Sass {
         Map* l = static_cast<Map*>(lhs);
         Map* r = static_cast<Map*>(rhs);
         if (l->length() != r->length()) return false;
-        for (size_t i = 0, L = l->length(); i < L; ++i) {
-          if (!eq((*l)[i]->key(), (*r)[i]->key(), ctx)) return false;
-          if (!eq((*l)[i]->value(), (*r)[i]->value(), ctx)) return false;
-        }
+        for (auto key : l->keys())
+          if (!eq(l->at(key), r->at(key), ctx)) return false;
         return true;
       } break;
       case Expression::NULL_VAL: {
@@ -853,7 +885,7 @@ namespace Sass {
     Expression* e = 0;
     switch (v.unknown.tag) {
       case SASS_BOOLEAN: {
-        e = new (ctx.mem) Boolean(path, position, v.boolean.value);
+        e = new (ctx.mem) Boolean(path, position, !!v.boolean.value);
       } break;
       case SASS_NUMBER: {
         e = new (ctx.mem) Number(path, position, v.number.value, v.number.unit);
@@ -872,9 +904,9 @@ namespace Sass {
         e = l;
       } break;
       case SASS_MAP: {
-        Map* m = new (ctx.mem) Map(path, position, v.map.length);
+        Map* m = new (ctx.mem) Map(path, position);
         for (size_t i = 0, L = v.map.length; i < L; ++i) {
-          *m << new (ctx.mem) KeyValuePair(path, position,
+          *m << std::make_pair(
             cval_to_astnode(v.map.pairs[i].key, ctx, backtrace, path, position),
             cval_to_astnode(v.map.pairs[i].value, ctx, backtrace, path, position));
         }

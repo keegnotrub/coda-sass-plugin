@@ -23,11 +23,11 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.1</string>
+	<string>3.0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.0.1</string>
+	<string>3.0.2</string>
 	<key>CodaPlugInMinimumAPIVersion</key>
 	<string>7</string>
 	<key>NSHumanReadableCopyright</key>

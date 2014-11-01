@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 #include "parser.hpp"
 #include "file.hpp"
 #include "inspect.hpp"
@@ -271,8 +272,8 @@ namespace Sass {
     if (!lex< exactly<':'> >()) error("expected ':' after " + name + " in assignment statement");
     Expression* val = parse_list();
     val->is_delayed(false);
-    bool is_guarded = lex< default_flag >();
-    bool is_global = lex< global_flag >();
+    bool is_guarded = lex< default_flag >() != NULL;
+    bool is_global = lex< global_flag >() != NULL;
     Assignment* var = new (ctx.mem) Assignment(path, var_source_position, name, val, is_guarded, is_global);
     return var;
   }
@@ -589,14 +590,14 @@ namespace Sass {
     bool semicolon = false;
     Selector_Lookahead lookahead_result;
     Block* block = new (ctx.mem) Block(path, source_position);
-    
-    // JMA - ensure that a block containing only block_comments is parsed 
+
+    // JMA - ensure that a block containing only block_comments is parsed
     while (lex< block_comment >()) {
       String*  contents = parse_interpolated_chunk(lexed);
       Comment* comment  = new (ctx.mem) Comment(path, source_position, contents);
       (*block) << comment;
     }
-    
+
     while (!lex< exactly<'}'> >()) {
       if (semicolon) {
         if (!lex< exactly<';'> >()) {
@@ -788,10 +789,8 @@ namespace Sass {
       value = parse_space_list();
     }
 
-    KeyValuePair* pair = new (ctx.mem) KeyValuePair(path, source_position, key, value);
-
     Map* map = new (ctx.mem) Map(path, source_position, 1);
-    (*map) << pair;
+    (*map) << make_pair(key, value);
 
     while (lex< exactly<','> >())
     {
@@ -812,7 +811,7 @@ namespace Sass {
         value = parse_space_list();
       }
 
-      (*map) << new (ctx.mem) KeyValuePair(path, source_position, key, value);
+      (*map) << make_pair(key, value);
     }
 
     if (!lex< exactly<')'> >()) error("unclosed parenthesis 3");
@@ -1072,7 +1071,7 @@ namespace Sass {
         *args << arg;
         return result;
       }
-      catch (Error& err) {
+      catch (Error&) {
         // back up so we can try again
         position = here;
         source_position = here_p;
@@ -1456,7 +1455,12 @@ namespace Sass {
     lex < each_directive >();
     Position each_source_position = source_position;
     if (!lex< variable >()) error("@each directive requires an iteration variable");
-    string var(Util::normalize_underscores(lexed));
+    vector<string> vars;
+    vars.push_back(Util::normalize_underscores(lexed));
+    while (peek< exactly<','> >() && lex< exactly<','> >()) {
+      if (!lex< variable >()) error("@each directive requires an iteration variable");
+      vars.push_back(Util::normalize_underscores(lexed));
+    }
     if (!lex< in >()) error("expected 'in' keyword in @each directive");
     Expression* list = parse_list();
     list->is_delayed(false);
@@ -1468,7 +1472,7 @@ namespace Sass {
     }
     if (!peek< exactly<'{'> >()) error("expected '{' after the upper bound in @each directive");
     Block* body = parse_block();
-    return new (ctx.mem) Each(path, each_source_position, var, list, body);
+    return new (ctx.mem) Each(path, each_source_position, vars, list, body);
   }
 
   While* Parser::parse_while_directive()
