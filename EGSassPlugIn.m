@@ -71,7 +71,9 @@
 
 - (BOOL)isFileScss:(NSString*)file
 {
-	return [[[file pathExtension] lowercaseString] isEqualToString:@"scss"];
+    NSString *fileExtension = [[file pathExtension] lowercaseString];
+
+	return [fileExtension isEqualToString:@"scss"] || [fileExtension isEqualToString:@"sass"];
 }
 
 - (BOOL)isScssFileScssPartial:(NSString*)scssFile
@@ -81,7 +83,7 @@
 
 - (NSArray*)scssFilesForScssDirectory:(NSString*)scssDirectory
 {
-	NSString *pattern = @"[!_]*.scss";
+	NSString *pattern = @"[!_]*.s[ca]ss";
 	NSString *fullPattern = [scssDirectory stringByAppendingPathComponent:pattern];
     
 	glob_t gt;
@@ -137,8 +139,9 @@
 {
 	NSString *dir = [scssFile stringByDeletingLastPathComponent];
 	NSString *scssFileName = [scssFile lastPathComponent];
+    NSString *scssFileExtension = [scssFileName pathExtension];
 	
-	NSString *cssFileName = [scssFileName stringByReplacingOccurrencesOfString:@"scss"
+	NSString *cssFileName = [scssFileName stringByReplacingOccurrencesOfString:scssFileExtension
 																	withString:@"css"
 																	   options:NSCaseInsensitiveSearch
 																		 range:NSMakeRange(0, [scssFileName length])];
