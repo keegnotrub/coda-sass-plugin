@@ -1,6 +1,8 @@
+@charset "UTF-8";
+
 /// Removes the element's gutter margin, regardless of its position in the grid hierarchy or display property. It can target a specific element, or every `nth-child` occurrence. Works only with `block` layouts.
 ///
-/// @param {List} $query (block)
+/// @param {List} $query [block]
 ///   List of arguments. Supported arguments are `nth-child` selectors (targets a specific pseudo element) and `auto` (targets `last-child`).
 ///
 ///   When passed an `nth-child` argument of type `*n` with `block` display, the omega mixin automatically adds a clear to the `*n+1` th element. Note that composite arguments such as `2n+1` do not support this feature.
@@ -57,21 +59,15 @@
     @else {
       @include nth-child($query, $direction);
     }
-  }
-
-  @else if length($query) == 2 {
+  } @else if length($query) == 2 {
     @if $auto {
       &:last-child {
         margin-#{$direction}: 0;
       }
-    }
-
-    @else {
+    } @else {
       @include nth-child(nth($query, 1), $direction);
     }
-  }
-
-  @else {
+  } @else {
     @include -neat-warn("Too many arguments passed to the omega() mixin.");
   }
 }
@@ -83,7 +79,7 @@
     margin-#{$direction}: 0;
   }
 
-  @if type-of($query) == number {
+  @if type-of($query) == number and unit($query) == "n" {
     &:nth-child(#{$query}+1) {
       clear: $opposite-direction;
     }

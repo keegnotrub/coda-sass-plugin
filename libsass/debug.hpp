@@ -1,9 +1,9 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef SASS_DEBUG_H
+#define SASS_DEBUG_H
 
 #include <stdint.h>
 
-enum dbg_lvl_t {
+enum dbg_lvl_t : uint32_t {
 	NONE = 0,
 	TRIM = 1,
 	CHUNKS = 2,
@@ -36,4 +36,4 @@ const uint32_t debug_lvl = (DEBUG_LVL);
 
 #endif // DEBUG
 
-#endif // DEBUG_H
+#endif // SASS_DEBUG

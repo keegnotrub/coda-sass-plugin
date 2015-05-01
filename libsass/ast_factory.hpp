@@ -1,10 +1,9 @@
-#define SASS_AST_FACTORY
+#ifndef SASS_AST_FACTORY_H
+#define SASS_AST_FACTORY_H
 
 #include <vector>
 
-#ifndef SASS_AST
 #include "ast.hpp"
-#endif
 
 namespace Sass {
   using namespace std;
@@ -16,13 +15,18 @@ namespace Sass {
     Block* new_Block(string p, size_t l, size_t s = 0, bool r = false);
     Ruleset* new_Ruleset(string p, size_t l, Selector* s, Block* b);
     Propset* new_Propset(string p, size_t l, String* pf, Block* b);
+    Feature_Query* new_Feature_Query(string p, size_t l, Feature_Query* f, Block* b);
     Media_Query* new_Media_Query(string p, size_t l, List* q, Block* b);
+    At_Root_Block* new_At_Root_Block(string p, size_t l, Selector* sel, Block* b);
     At_Rule* new_At_Rule(string p, size_t l, string kwd, Selector* sel, Block* b);
+    Keyframe_Rule* new_Keyframe_Rule(string p, size_t l, Block* b);
     Declaration* new_Declaration(string p, size_t l, String* prop, List* vals);
     Assignment* new_Assignment(string p, size_t l, string var, Expression* val, bool guarded = false);
     Import<Function_Call*>* new_CSS_Import(string p, size_t l, Function_Call* loc);
     Import<String*>* new_SASS_Import(string p, size_t l, String* loc);
     Warning* new_Warning(string p, size_t l, Expression* msg);
+    Error* new_Error(string p, size_t l, Expression* msg);
+    Debug* new_Debug(string p, size_t l, Expression* val);
     Comment* new_Comment(string p, size_t l, String* txt);
     If* new_If(string p, size_t l, Expression* pred, Block* con, Block* alt = 0);
     For* new_For(string p, size_t l, string var, Expression* lo, Expression* hi, Block* b, bool inc);
@@ -63,7 +67,9 @@ namespace Sass {
     String_Constant* new_String_Constant(string p, size_t l, string val);
     String_Constant* new_String_Constant(string p, size_t l, const char* beg);
     String_Constant* new_String_Constant(string p, size_t l, const char* beg, const char* end);
+    Feature_Query_Condition* new_Feature_Query_Condition(string p, size_t l, String* f, Expression* v);
     Media_Expression* new_Media_Expression(string p, size_t l, String* f, Expression* v);
+    Parent_Selector* new_Parent_Selector(string p, size_t l, Selector* s);
     // parameters and arguments
     Parameter* new_Parameter(string p, size_t l, string n, Expression* def = 0, bool rest = false);
     Parameters* new_Parameters(string p, size_t l);
@@ -71,6 +77,7 @@ namespace Sass {
     Arguments* new_Arguments(string p, size_t l);
     // selectors
     Selector_Schema* new_Selector_Schema(string p, size_t l, String* c);
+    Attribute_Selector* new_Attribute_Selector(string p, size_t l, string n, string m, String* v);
     Simple_Selector* new_Simple_Selector(string p, size_t l, string c);
     Reference_Selector* new_Reference_Selector(string p, size_t l);
     Placeholder_Selector* new_Placeholder_Selector(string p, size_t l, string n);
@@ -81,3 +88,5 @@ namespace Sass {
     Selector_List* new_Selector_List(string p, size_t l, size_t s = 0);
   };
 }
+
+#endif

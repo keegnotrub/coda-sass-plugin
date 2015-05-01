@@ -1,6 +1,3 @@
-#ifndef SASS_UTF8_STRING
-#define SASS_UTF8_STRING
-
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -47,7 +44,7 @@ namespace Sass {
 
     // function that will return a normalized index, given a crazy one
     size_t normalize_index(int index, size_t len) {
-      long signed_len = len;
+      long signed_len = static_cast<long>(len);
       // assuming the index is 1-based
       // we are returning a 0-based index
       if (index > 0 && index <= signed_len) {
@@ -98,5 +95,3 @@ namespace Sass {
 
   }
 }
-
-#endif

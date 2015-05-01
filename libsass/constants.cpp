@@ -2,12 +2,22 @@
 
 namespace Sass {
   namespace Constants {
-    extern const int SPECIFICITY_BASE = 1000;
 
-    // hidden variable name for the image path (for the image-url built-in)
-    extern const char image_path_var[] = "$[image path]";
+    extern const unsigned long MaxCallStack = 1024;
+
+    // https://github.com/sass/libsass/issues/592
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
+    // https://github.com/sass/sass/issues/1495#issuecomment-61189114
+    extern const unsigned long Specificity_Star = 0;
+    extern const unsigned long Specificity_Universal = 1 << 0;
+    extern const unsigned long Specificity_Type = 1 << 8;
+    extern const unsigned long Specificity_Class = 1 << 16;
+    extern const unsigned long Specificity_Attr = 1 << 16;
+    extern const unsigned long Specificity_Pseudo = 1 << 16;
+    extern const unsigned long Specificity_ID = 1 << 24;
 
     // sass keywords
+    extern const char at_root_kwd[]       = "@at-root";
     extern const char import_kwd[]        = "@import";
     extern const char mixin_kwd[]         = "@mixin";
     extern const char function_kwd[]      = "@function";
@@ -26,10 +36,16 @@ namespace Sass {
     extern const char in_kwd[]            = "in";
     extern const char while_kwd[]         = "@while";
     extern const char warn_kwd[]          = "@warn";
+    extern const char error_kwd[]         = "@error";
+    extern const char debug_kwd[]         = "@debug";
     extern const char default_kwd[]       = "default";
     extern const char global_kwd[]        = "global";
     extern const char null_kwd[]          = "null";
     extern const char optional_kwd[]      = "optional";
+    extern const char with_kwd[]          = "with";
+    extern const char without_kwd[]       = "without";
+    extern const char all_kwd[]           = "all";
+    extern const char rule_kwd[]          = "rule";
 
     // css standard units
     extern const char em_kwd[]   = "em";
@@ -42,6 +58,7 @@ namespace Sass {
     extern const char deg_kwd[]  = "deg";
     extern const char rad_kwd[]  = "rad";
     extern const char grad_kwd[] = "grad";
+    extern const char turn_kwd[] = "turn";
     extern const char ms_kwd[]   = "ms";
     extern const char s_kwd[]    = "s";
     extern const char Hz_kwd[]   = "Hz";
@@ -57,11 +74,11 @@ namespace Sass {
     // css functions and keywords
     extern const char charset_kwd[]      = "@charset";
     extern const char media_kwd[]        = "@media";
+    extern const char supports_kwd[]     = "@supports";
     extern const char keyframes_kwd[]    = "keyframes";
     extern const char only_kwd[]         = "only";
     extern const char rgb_kwd[]          = "rgb(";
     extern const char url_kwd[]          = "url(";
-    extern const char image_url_kwd[]    = "image-url(";
     extern const char important_kwd[]    = "important";
     extern const char pseudo_not_kwd[]   = ":not(";
     extern const char even_kwd[]         = "even";
@@ -71,6 +88,10 @@ namespace Sass {
     extern const char calc_kwd[]         = "calc(";
     extern const char moz_calc_kwd[]     = "-moz-calc(";
     extern const char webkit_calc_kwd[]  = "-webkit-calc(";
+    extern const char ms_calc_kwd[]      = "-ms-calc(";
+
+    // css selector keywords
+    extern const char sel_deep_kwd[] = "/deep/";
 
     // css attribute-matching operators
     extern const char tilde_equal[]  = "~=";
@@ -104,7 +125,7 @@ namespace Sass {
     extern const char sign_chars[]      = "-+";
     extern const char hyphen[]          = "-";
     extern const char ellipsis[]        = "...";
-    extern const char url_space_chars[] = " \t\r\n\f";
+    // extern const char url_space_chars[] = " \t\r\n\f";
     extern const char escape_chars[]    = " -~"; // need to include unicode spaces too
     // type names
     extern const char numeric_name[]    = "numeric value";
@@ -117,6 +138,13 @@ namespace Sass {
     extern const char list_name[]       = "list";
     extern const char map_name[]        = "map";
     extern const char arglist_name[]    = "arglist";
+
+    // constants for uri parsing (RFC 3986 Appendix A.)
+    extern const char uri_chars[]  = ":;/?!$%&#@|[]{}'`^\"*+-.,_=~";
+
+    // some specific constant character classes
+    // they must be static to be useable by lexer
+    extern const char static_ops[]      = "*/%";
 
     // byte order marks
     // (taken from http://en.wikipedia.org/wiki/Byte_order_mark)

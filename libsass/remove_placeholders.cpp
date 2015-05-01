@@ -12,12 +12,12 @@ namespace Sass {
 
     template<typename T>
     void Remove_Placeholders::clean_selector_list(T r) {
-        
+
         // Create a new selector group without placeholders
         Selector_List* sl = static_cast<Selector_List*>(r->selector());
 
         if (sl) {
-            Selector_List* new_sl = new (ctx.mem) Selector_List(sl->path(), sl->position());
+            Selector_List* new_sl = new (ctx.mem) Selector_List(sl->pstate());
 
             for (size_t i = 0, L = sl->length(); i < L; ++i) {
                 if (!(*sl)[i]->has_placeholder()) {
@@ -28,7 +28,7 @@ namespace Sass {
             // Set the new placeholder selector list
             r->selector(new_sl);
         }
-            
+
         // Iterate into child blocks
         Block* b = r->block();
 

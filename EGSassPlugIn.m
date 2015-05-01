@@ -194,7 +194,6 @@
         options.omit_source_map_url = true;
     }
     
-	options.image_path = "images";
 	options.include_paths = [[self.plugInBundle.resourcePath stringByAppendingPathComponent:@"scss"] UTF8String];
     
 	struct sass_file_context *ctx = sass_new_file_context();

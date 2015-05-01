@@ -1,7 +1,12 @@
+#ifndef SASS_AST_FWD_DECL_H
+#define SASS_AST_FWD_DECL_H
+
 /////////////////////////////////////////////
 // Forward declarations for the AST visitors.
 /////////////////////////////////////////////
 namespace Sass {
+
+  enum Output_Style { NESTED, EXPANDED, COMPACT, COMPRESSED, FORMATTED };
 
   class AST_Node;
   // statements
@@ -9,13 +14,19 @@ namespace Sass {
   class Block;
   class Ruleset;
   class Propset;
+  class Bubble;
   class Media_Block;
+  class Feature_Block;
   class At_Rule;
+  class Keyframe_Rule;
+  class At_Root_Block;
   class Declaration;
   class Assignment;
   class Import;
   class Import_Stub;
   class Warning;
+  class Error;
+  class Debug;
   class Comment;
   class If;
   class For;
@@ -42,9 +53,14 @@ namespace Sass {
   class String_Schema;
   class String;
   class String_Constant;
+  class String_Quoted;
   class Media_Query;
   class Media_Query_Expression;
+  class Feature_Query;
+  class Feature_Query_Condition;
+  class At_Root_Expression;
   class Null;
+  class Parent_Selector;
   // parameters and arguments
   class Parameter;
   class Parameters;
@@ -65,3 +81,5 @@ namespace Sass {
   class Selector_List;
 
 }
+
+#endif

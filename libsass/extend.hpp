@@ -1,27 +1,20 @@
-#define SASS_EXTEND
+#ifndef SASS_EXTEND_H
+#define SASS_EXTEND_H
 
-#include <vector>
 #include <map>
 #include <set>
+#include <vector>
 #include <iostream>
 
-#ifndef SASS_AST
 #include "ast.hpp"
-#endif
-
-#ifndef SASS_OPERATION
 #include "operation.hpp"
-#endif
-
-#ifndef SASS_SUBSET_MAP
 #include "subset_map.hpp"
-#endif
 
 namespace Sass {
   using namespace std;
 
-  struct Context;
-  
+  class Context;
+
   typedef Subset_Map<string, pair<Complex_Selector*, Compound_Selector*> > ExtensionSubsetMap;
 
   class Extend : public Operation_CRTP<void, Extend> {
@@ -39,6 +32,7 @@ namespace Sass {
 
     void operator()(Block*);
     void operator()(Ruleset*);
+    void operator()(Feature_Block*);
     void operator()(Media_Block*);
     void operator()(At_Rule*);
 
@@ -47,3 +41,5 @@ namespace Sass {
   };
 
 }
+
+#endif

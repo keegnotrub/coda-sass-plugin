@@ -1,12 +1,13 @@
-#define SASS_OPERATION
+#ifndef SASS_OPERATION_H
+#define SASS_OPERATION_H
+
+#include <iostream>
+#include <typeinfo>
 
 #include "ast_fwd_decl.hpp"
 
-#include <iostream>
-using namespace std;
-#include <typeinfo>
-
 namespace Sass {
+  using namespace std;
 
   template<typename T>
   class Operation {
@@ -17,13 +18,19 @@ namespace Sass {
     virtual T operator()(Block* x)                  = 0;
     virtual T operator()(Ruleset* x)                = 0;
     virtual T operator()(Propset* x)                = 0;
+    virtual T operator()(Bubble* x)                 = 0;
+    virtual T operator()(Feature_Block* x)          = 0;
     virtual T operator()(Media_Block* x)            = 0;
+    virtual T operator()(At_Root_Block* x)          = 0;
     virtual T operator()(At_Rule* x)                = 0;
+    virtual T operator()(Keyframe_Rule* x)          = 0;
     virtual T operator()(Declaration* x)            = 0;
     virtual T operator()(Assignment* x)             = 0;
     virtual T operator()(Import* x)                 = 0;
     virtual T operator()(Import_Stub* x)            = 0;
     virtual T operator()(Warning* x)                = 0;
+    virtual T operator()(Error* x)                  = 0;
+    virtual T operator()(Debug* x)                  = 0;
     virtual T operator()(Comment* x)                = 0;
     virtual T operator()(If* x)                     = 0;
     virtual T operator()(For* x)                    = 0;
@@ -48,9 +55,13 @@ namespace Sass {
     virtual T operator()(Boolean* x)                = 0;
     virtual T operator()(String_Schema* x)          = 0;
     virtual T operator()(String_Constant* x)        = 0;
+    virtual T operator()(Feature_Query* x)          = 0;
+    virtual T operator()(Feature_Query_Condition* x)= 0;
     virtual T operator()(Media_Query* x)            = 0;
     virtual T operator()(Media_Query_Expression* x) = 0;
+    virtual T operator()(At_Root_Expression* x)     = 0;
     virtual T operator()(Null* x)                   = 0;
+    virtual T operator()(Parent_Selector* x)        = 0;
     // parameters and arguments
     virtual T operator()(Parameter* x)              = 0;
     virtual T operator()(Parameters* x)             = 0;
@@ -82,13 +93,19 @@ namespace Sass {
     virtual T operator()(Block* x)                  { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Ruleset* x)                { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Propset* x)                { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Bubble* x)                 { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Feature_Block* x)          { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Media_Block* x)            { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(At_Root_Block* x)          { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(At_Rule* x)                { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Keyframe_Rule* x)          { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Declaration* x)            { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Assignment* x)             { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Import* x)                 { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Import_Stub* x)            { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Warning* x)                { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Error* x)                  { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Debug* x)                  { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Comment* x)                { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(If* x)                     { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(For* x)                    { return static_cast<D*>(this)->fallback(x); }
@@ -113,9 +130,13 @@ namespace Sass {
     virtual T operator()(Boolean* x)                { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(String_Schema* x)          { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(String_Constant* x)        { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Feature_Query* x)          { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Feature_Query_Condition* x){ return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Media_Query* x)            { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Media_Query_Expression* x) { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(At_Root_Expression* x)     { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Null* x)                   { return static_cast<D*>(this)->fallback(x); }
+    virtual T operator()(Parent_Selector* x)        { return static_cast<D*>(this)->fallback(x); }
     // parameters and arguments
     virtual T operator()(Parameter* x)              { return static_cast<D*>(this)->fallback(x); }
     virtual T operator()(Parameters* x)             { return static_cast<D*>(this)->fallback(x); }
@@ -141,3 +162,5 @@ namespace Sass {
   inline Operation_CRTP<T, D>::~Operation_CRTP()    { }
 
 }
+
+#endif

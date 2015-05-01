@@ -1,34 +1,27 @@
-#define SASS_FUNCTIONS
-
-#ifndef SASS_ENVIRONMENT
-#include "environment.hpp"
-#endif
-
-#ifndef SASS
-#include "sass.h"
-#endif
+#ifndef SASS_FUNCTIONS_H
+#define SASS_FUNCTIONS_H
 
 #include <string>
 
-#ifndef SASS_POSITION
 #include "position.hpp"
-#endif
+#include "environment.hpp"
+#include "sass_functions.h"
 
 #define BUILT_IN(name) Expression*\
-name(Env& env, Env& d_env, Context& ctx, Signature sig, const string& path, Position position, Backtrace* backtrace)
+name(Env& env, Env& d_env, Context& ctx, Signature sig, ParserState pstate, Backtrace* backtrace)
 
 namespace Sass {
-  struct Context;
+  class Context;
   struct Backtrace;
   class AST_Node;
   class Expression;
   class Definition;
   typedef Environment<AST_Node*> Env;
   typedef const char* Signature;
-  typedef Expression* (*Native_Function)(Env&, Env&, Context&, Signature, const string&, Position, Backtrace*);
+  typedef Expression* (*Native_Function)(Env&, Env&, Context&, Signature, ParserState, Backtrace*);
 
-  Definition* make_native_function(Signature, Native_Function, Context&);
-  Definition* make_c_function(Signature sig, Sass_C_Function f, void* cookie, Context& ctx);
+  Definition* make_native_function(Signature, Native_Function, Context& ctx);
+  Definition* make_c_function(Sass_Function_Entry c_func, Context& ctx);
 
   namespace Functions {
 
@@ -77,13 +70,14 @@ namespace Sass {
     extern Signature abs_sig;
     extern Signature min_sig;
     extern Signature max_sig;
+    extern Signature inspect_sig;
+    extern Signature random_sig;
     extern Signature length_sig;
     extern Signature nth_sig;
     extern Signature index_sig;
     extern Signature join_sig;
     extern Signature append_sig;
     extern Signature zip_sig;
-    extern Signature compact_sig;
     extern Signature list_separator_sig;
     extern Signature type_of_sig;
     extern Signature unit_sig;
@@ -93,6 +87,7 @@ namespace Sass {
     extern Signature global_variable_exists_sig;
     extern Signature function_exists_sig;
     extern Signature mixin_exists_sig;
+    extern Signature feature_exists_sig;
     extern Signature call_sig;
     extern Signature not_sig;
     extern Signature if_sig;
@@ -104,6 +99,8 @@ namespace Sass {
     extern Signature map_values_sig;
     extern Signature map_has_key_sig;
     extern Signature keywords_sig;
+    extern Signature set_nth_sig;
+    extern Signature unique_id_sig;
 
     BUILT_IN(rgb);
     BUILT_IN(rgba_4);
@@ -147,13 +144,14 @@ namespace Sass {
     BUILT_IN(abs);
     BUILT_IN(min);
     BUILT_IN(max);
+    BUILT_IN(inspect);
+    BUILT_IN(random);
     BUILT_IN(length);
     BUILT_IN(nth);
     BUILT_IN(index);
     BUILT_IN(join);
     BUILT_IN(append);
     BUILT_IN(zip);
-    BUILT_IN(compact);
     BUILT_IN(list_separator);
     BUILT_IN(type_of);
     BUILT_IN(unit);
@@ -163,6 +161,7 @@ namespace Sass {
     BUILT_IN(global_variable_exists);
     BUILT_IN(function_exists);
     BUILT_IN(mixin_exists);
+    BUILT_IN(feature_exists);
     BUILT_IN(call);
     BUILT_IN(sass_not);
     BUILT_IN(sass_if);
@@ -174,6 +173,10 @@ namespace Sass {
     BUILT_IN(map_values);
     BUILT_IN(map_has_key);
     BUILT_IN(keywords);
+    BUILT_IN(set_nth);
+    BUILT_IN(unique_id);
 
   }
 }
+
+#endif
