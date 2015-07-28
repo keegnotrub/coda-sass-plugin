@@ -4,6 +4,13 @@
 #define PATH_SEP ':'
 #endif
 
+#include <string>
+#include <cstdlib>
+#include <cstring>
+#include <iomanip>
+#include <sstream>
+#include <iostream>
+
 #include "ast.hpp"
 #include "util.hpp"
 #include "sass.h"
@@ -28,13 +35,6 @@
 #include "sass2scss.h"
 #include "prelexer.hpp"
 #include "emitter.hpp"
-
-#include <string>
-#include <cstdlib>
-#include <cstring>
-#include <iomanip>
-#include <sstream>
-#include <iostream>
 
 namespace Sass {
   using namespace Constants;
@@ -539,6 +539,8 @@ namespace Sass {
     // Misc Functions
     register_function(ctx, inspect_sig, inspect, env);
     register_function(ctx, unique_id_sig, unique_id, env);
+    // Selector functions
+    register_function(ctx, is_superselector_sig, is_superselector, env);
   }
 
   void register_c_functions(Context& ctx, Env* env, Sass_Function_List descrs)

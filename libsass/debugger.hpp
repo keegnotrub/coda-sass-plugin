@@ -203,8 +203,8 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << (block->is_interpolated() ? " [is_interpolated]": " -")
     << endl;
-    debug_ast(block->feature(), ind + " f) ");
-    debug_ast(block->value(), ind + " v) ");
+    debug_ast(block->feature(), ind + " feature) ");
+    debug_ast(block->value(), ind + " value) ");
 
   } else if (dynamic_cast<Media_Query*>(node)) {
     Media_Query* block = dynamic_cast<Media_Query*>(node);
@@ -264,6 +264,9 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << ind << "If " << block;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " " << block->tabs() << endl;
+    debug_ast(block->predicate(), ind + " = ");
+    debug_ast(block->consequent(), ind + " <>");
+    debug_ast(block->alternative(), ind + " ><");
   } else if (dynamic_cast<Return*>(node)) {
     Return* block = dynamic_cast<Return*>(node);
     cerr << ind << "Return " << block;
@@ -290,7 +293,7 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << ind << "Import " << block;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " " << block->tabs() << endl;
-    debug_ast(block->media_queries(), ind + " @ ");
+    // debug_ast(block->media_queries(), ind + " @ ");
     // vector<string>         files_;
     for (auto imp : block->urls()) debug_ast(imp, "@ ", env);
   } else if (dynamic_cast<Assignment*>(node)) {
@@ -353,7 +356,9 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     if (block->block()) for(auto i : block->block()->elements()) { debug_ast(i, ind + " ", env); }
   } else if (dynamic_cast<Mixin_Call*>(node)) {
     Mixin_Call* block = dynamic_cast<Mixin_Call*>(node);
-    cerr << ind << "Mixin_Call " << block << " " << block->tabs() << endl;
+    cerr << ind << "Mixin_Call " << block << " " << block->tabs();
+    cerr << " [" <<  block->name() << "]" << endl;
+    debug_ast(block->arguments(), ind + " args: ");
     if (block->block()) for(auto i : block->block()->elements()) { debug_ast(i, ind + " ", env); }
   } else if (dynamic_cast<Ruleset*>(node)) {
     Ruleset* ruleset = dynamic_cast<Ruleset*>(node);
@@ -380,9 +385,6 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << endl;
   } else if (dynamic_cast<Variable*>(node)) {
     Variable* expression = dynamic_cast<Variable*>(node);
-    cerr << ind << "Variable " << expression << " [" << expression->name() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Variable " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->name() << "]" << endl;
@@ -390,9 +392,6 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     if (env && env->has(name)) debug_ast(static_cast<Expression*>((*env)[name]), ind + " -> ", env);
   } else if (dynamic_cast<Function_Call_Schema*>(node)) {
     Function_Call_Schema* expression = dynamic_cast<Function_Call_Schema*>(node);
-    cerr << ind << "Function_Call_Schema " << expression << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Function_Call_Schema " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << "" << endl;
@@ -400,29 +399,19 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     debug_ast(expression->arguments(), ind + " args: ", env);
   } else if (dynamic_cast<Function_Call*>(node)) {
     Function_Call* expression = dynamic_cast<Function_Call*>(node);
-    cerr << ind << "Function_Call " << expression << " [" << expression->name() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Function_Call " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->name() << "]" << endl;
     debug_ast(expression->arguments(), ind + " args: ", env);
   } else if (dynamic_cast<Arguments*>(node)) {
     Arguments* expression = dynamic_cast<Arguments*>(node);
-    cerr << ind << "Arguments " << expression << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Arguments " << expression;
+    if (expression->is_delayed()) cerr << " [delayed]";
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << endl;
     for(auto i : expression->elements()) { debug_ast(i, ind + " ", env); }
   } else if (dynamic_cast<Argument*>(node)) {
     Argument* expression = dynamic_cast<Argument*>(node);
-    cerr << ind << "Argument " << expression << " [" << expression->value() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    if (expression->is_rest_argument()) cerr << " [is_rest_argument]";
-    if (expression->is_keyword_argument()) cerr << " [is_keyword_argument]";
-    cerr << endl;
     cerr << ind << "Argument " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->value() << "]";
@@ -447,21 +436,15 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << " [rest: " << expression->is_rest_parameter() << "] " << endl;
   } else if (dynamic_cast<Unary_Expression*>(node)) {
     Unary_Expression* expression = dynamic_cast<Unary_Expression*>(node);
-    cerr << ind << "Unary_Expression " << expression << " [" << expression->type_name() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Unary_Expression " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->type() << "]" << endl;
     debug_ast(expression->operand(), ind + " operand: ", env);
   } else if (dynamic_cast<Binary_Expression*>(node)) {
     Binary_Expression* expression = dynamic_cast<Binary_Expression*>(node);
-    cerr << ind << "Binary_Expression " << expression << " [" << expression->type_name() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Binary_Expression " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
-    cerr << " [" << expression->type() << "]" << endl;
+    cerr << " [" << expression->type_name() << "]" << endl;
     debug_ast(expression->left(), ind + " left:  ", env);
     debug_ast(expression->right(), ind + " right: ", env);
   } else if (dynamic_cast<Map*>(node)) {
@@ -469,6 +452,10 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << ind << "Map " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [Hashed]" << endl;
+    for (auto i : expression->elements()) {
+      debug_ast(i.first, ind + " key: ");
+      debug_ast(i.second, ind + " val: ");
+    }
   } else if (dynamic_cast<List*>(node)) {
     List* expression = dynamic_cast<List*>(node);
     cerr << ind << "List " << expression;
@@ -476,9 +463,6 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << " (" << expression->length() << ") " <<
       (expression->separator() == Sass::List::Separator::COMMA ? "Comma " : "Space ") <<
       " [delayed: " << expression->is_delayed() << "] " <<
-      " [interpolant: " << expression->is_interpolant() << "]";
-    if (expression->is_arglist()) cerr << " [is_arglist]";
-    cerr << endl;
       " [interpolant: " << expression->is_interpolant() << "] " <<
       " [arglist: " << expression->is_arglist() << "] " <<
       endl;
@@ -490,79 +474,54 @@ inline void debug_ast(AST_Node* node, string ind = "", Env* env = 0)
     cerr << " [Statement]" << endl;
   } else if (dynamic_cast<Boolean*>(node)) {
     Boolean* expression = dynamic_cast<Boolean*>(node);
-    cerr << ind << "Boolean " << expression << " [" << expression->value() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Boolean " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->value() << "]" << endl;
   } else if (dynamic_cast<Color*>(node)) {
     Color* expression = dynamic_cast<Color*>(node);
-    cerr << ind << "Color " << expression << " [" << expression->r() << ":"  << expression->g() << ":" << expression->b() << "@" << expression->a() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Color " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->r() << ":"  << expression->g() << ":" << expression->b() << "@" << expression->a() << "]" << endl;
   } else if (dynamic_cast<Number*>(node)) {
     Number* expression = dynamic_cast<Number*>(node);
-    cerr << ind << "Number " << expression << " [" << expression->value() << expression->unit() << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    cerr << endl;
     cerr << ind << "Number " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
     cerr << " [" << expression->value() << expression->unit() << "]" << endl;
   } else if (dynamic_cast<String_Quoted*>(node)) {
     String_Quoted* expression = dynamic_cast<String_Quoted*>(node);
-    cerr << ind << "String_Quoted : " << expression << " [";
-    cerr << prettyprint(expression->value()) << "]";
-    if (expression->is_delayed()) cerr << " [delayed]";
-    if (expression->sass_fix_1291()) cerr << " [sass_fix_1291]";
-    if (expression->quote_mark()) cerr << " [quote_mark]";
-    cerr << " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
-    cerr << ind << "String_Quoted : " << expression;
+    cerr << ind << "String_Quoted " << expression;
     cerr << " (" << pstate_source_position(node) << ")";
-    cerr << " [" << prettyprint(expression->value()) << "]" <<
-      (expression->is_delayed() ? " {delayed}" : "") <<
-      (expression->sass_fix_1291() ? " {sass_fix_1291}" : "") <<
-      (expression->quote_mark() != 0 ? " {qm:" + string(1, expression->quote_mark()) + "}" : "") <<
-      " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
-  } else if (dynamic_cast<String_Constant*>(node)) {
-    String_Constant* expression = dynamic_cast<String_Constant*>(node);
-    cerr << ind << "String_Constant : " << expression;
     cerr << " [" << prettyprint(expression->value()) << "]";
     if (expression->is_delayed()) cerr << " [delayed]";
     if (expression->sass_fix_1291()) cerr << " [sass_fix_1291]";
-    cerr " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
-    cerr << ind << "String_Constant : " << expression;
+    if (expression->quote_mark()) cerr << " [quote_mark: " << expression->quote_mark() << "]";
+    cerr << " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
+  } else if (dynamic_cast<String_Constant*>(node)) {
+    String_Constant* expression = dynamic_cast<String_Constant*>(node);
+    cerr << ind << "String_Constant " << expression;
+    if (expression->concrete_type()) {
+      cerr << " " << expression->concrete_type();
+    }
     cerr << " (" << pstate_source_position(node) << ")";
-    cerr << " [" << prettyprint(expression->value()) << "]" <<
-      (expression->is_delayed() ? " {delayed}" : "") <<
-      (expression->sass_fix_1291() ? " {sass_fix_1291}" : "") <<
-      (expression->quote_mark() != 0 ? " {qm:" + string(1, expression->quote_mark()) + "}" : "") <<
-      " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
+    cerr << " [" << prettyprint(expression->value()) << "]";
+    if (expression->is_delayed()) cerr << " [delayed]";
+    if (expression->sass_fix_1291()) cerr << " [sass_fix_1291]";
+    cerr << " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
   } else if (dynamic_cast<String_Schema*>(node)) {
     String_Schema* expression = dynamic_cast<String_Schema*>(node);
-    cerr << ind << "String_Schema " << expression << " [" << expression->concrete_type() << "]";
+    cerr << ind << "String_Schema " << expression;
+    cerr << " " << expression->concrete_type();
     if (expression->is_delayed()) cerr << " [delayed]";
     if (expression->has_interpolants()) cerr << " [has_interpolants]";
-    cerr " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
-    cerr << ind << "String_Schema " << expression;
-    cerr << " (" << pstate_source_position(node) << ")";
-    cerr << " " << expression->concrete_type() <<
-      (expression->has_interpolants() ? " {has_interpolants}" : "") <<
-      endl;
+    cerr << " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
     for(auto i : expression->elements()) { debug_ast(i, ind + " ", env); }
   } else if (dynamic_cast<String*>(node)) {
     String* expression = dynamic_cast<String*>(node);
-    cerr << ind << "String " << expression << expression->concrete_type();
-    if (expression->sass_fix_1291()) cerr << " [sass_fix_1291]";
-    cerr " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
     cerr << ind << "String " << expression;
+    cerr << " " << expression->concrete_type();
     cerr << " (" << pstate_source_position(node) << ")";
-    cerr << expression->concrete_type() <<
-      " " << (expression->sass_fix_1291() ? "{sass_fix_1291}" : "") <<
-      endl;
+    if (expression->sass_fix_1291()) cerr << " [sass_fix_1291]";
+    cerr << " <" << prettyprint(expression->pstate().token.ws_before()) << ">" << endl;
   } else if (dynamic_cast<Expression*>(node)) {
     Expression* expression = dynamic_cast<Expression*>(node);
     cerr << ind << "Expression " << expression;

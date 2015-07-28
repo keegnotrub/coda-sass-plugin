@@ -1,3 +1,10 @@
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <typeinfo>
+
 #include "file.hpp"
 #include "eval.hpp"
 #include "ast.hpp"
@@ -10,12 +17,6 @@
 #include "backtrace.hpp"
 #include "prelexer.hpp"
 #include "parser.hpp"
-
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <typeinfo>
 
 namespace Sass {
   using namespace std;
@@ -392,11 +393,26 @@ namespace Sass {
   Expression* Eval::operator()(Map* m)
   {
     if (m->is_expanded()) return m;
+
+    // make sure we're not starting with duplicate keys.
+    // the duplicate key state will have been set in the parser phase.
+    if (m->has_duplicate_key()) {
+      To_String to_string(&ctx);
+      error("Duplicate key \"" + m->get_duplicate_key()->perform(&to_string) + "\" in map " + m->perform(&to_string) + ".", m->pstate());
+    }
+
     Map* mm = new (ctx.mem) Map(m->pstate(),
                                   m->length());
     for (auto key : m->keys()) {
-      *mm << std::make_pair(key->perform(this), m->at(key)->perform(this));
+      *mm << std::make_pair(key->perform(this), m->at(key)->perform(this));;
     }
+
+    // check the evaluated keys aren't duplicates.
+    if (mm->has_duplicate_key()) {
+      To_String to_string(&ctx);
+      error("Duplicate key \"" + mm->get_duplicate_key()->perform(&to_string) + "\" in map " + mm->perform(&to_string) + ".", mm->pstate());
+    }
+
     mm->is_expanded(true);
     return mm;
   }
@@ -528,7 +544,9 @@ namespace Sass {
   Expression* Eval::operator()(Function_Call* c)
   {
     if (backtrace->parent != NULL && backtrace->depth() > Constants::MaxCallStack) {
-        error("Stack depth exceeded max of " + to_string(Constants::MaxCallStack), c->pstate(), backtrace);
+        ostringstream stm;
+        stm << "Stack depth exceeded max of " << Constants::MaxCallStack;
+        error(stm.str(), c->pstate(), backtrace);
     }
     string name(Util::normalize_underscores(c->name()));
     string full_name(name + "[f]");
@@ -780,6 +798,10 @@ namespace Sass {
                                       zero);
         break;
       case Textual::HEX: {
+        if (t->value().substr(0, 1) != "#") {
+          result = new (ctx.mem) String_Constant(t->pstate(), t->value());
+          break;
+        }
         string hext(t->value().substr(1)); // chop off the '#'
         if (hext.length() == 6) {
           string r(hext.substr(0,2));
@@ -876,6 +898,7 @@ namespace Sass {
       Expression* value = static_cast<Expression*>((*env)[name]);
       return evacuate_quotes(interpolation(value));
     } else if (Binary_Expression* var = dynamic_cast<Binary_Expression*>(s)) {
+      var->is_delayed(false);
       Expression* ex = var->perform(this);
       return evacuate_quotes(interpolation(ex));
     } else if (Function_Call* var = dynamic_cast<Function_Call*>(s)) {
@@ -901,9 +924,9 @@ namespace Sass {
   {
     string acc;
     for (size_t i = 0, L = s->length(); i < L; ++i) {
-      if (String_Quoted* str_quoted = dynamic_cast<String_Quoted*>((*s)[i])) {
-        if (!str_quoted->is_delayed()) str_quoted->value(string_eval_escapes(str_quoted->value()));
-      }
+      // if (String_Quoted* str_quoted = dynamic_cast<String_Quoted*>((*s)[i])) {
+        // if (!str_quoted->is_delayed()) str_quoted->value(string_eval_escapes(str_quoted->value()));
+      // }
       acc += interpolation((*s)[i]);
     }
     String_Quoted* str = new (ctx.mem) String_Quoted(s->pstate(), acc);
@@ -912,6 +935,7 @@ namespace Sass {
     } else if (str->quote_mark()) {
       str->quote_mark('*');
     }
+    str->is_delayed(true);
     return str;
   }
 
@@ -986,8 +1010,16 @@ namespace Sass {
   {
     Expression* feature = e->feature();
     feature = (feature ? feature->perform(this) : 0);
+    if (feature && dynamic_cast<String_Quoted*>(feature)) {
+      feature = new (ctx.mem) String_Constant(feature->pstate(),
+                                              dynamic_cast<String_Quoted*>(feature)->value());
+    }
     Expression* value = e->value();
     value = (value ? value->perform(this) : 0);
+    if (value && dynamic_cast<String_Quoted*>(value)) {
+      value = new (ctx.mem) String_Constant(value->pstate(),
+                                            dynamic_cast<String_Quoted*>(value)->value());
+    }
     return new (ctx.mem) Media_Query_Expression(e->pstate(),
                                                 feature,
                                                 value,
@@ -1014,8 +1046,7 @@ namespace Sass {
         is_rest_argument = false;
         is_keyword_argument = true;
       }
-      else
-      if(val->concrete_type() != Expression::LIST) {
+      else if(val->concrete_type() != Expression::LIST) {
         List* wrapper = new (ctx.mem) List(val->pstate(),
                                            0,
                                            List::COMMA,
@@ -1047,9 +1078,13 @@ namespace Sass {
 
   Expression* Eval::operator()(Parent_Selector* p)
   {
+    // no idea why both calls are needed
     Selector* s = p->perform(contextualize);
+    if (!s) s = p->selector()->perform(contextualize);
     // access to parent selector may return 0
     Selector_List* l = static_cast<Selector_List*>(s);
+    // some spec tests cause this (might be a valid case!)
+    // if (!s) { cerr << "Parent Selector eval error" << endl; }
     if (!s) { l = new (ctx.mem) Selector_List(p->pstate()); }
     return l->perform(listize);
   }
@@ -1088,8 +1123,10 @@ namespace Sass {
       } break;
 
       case Expression::STRING: {
-        return unquote(static_cast<String_Constant*>(lhs)->value()) ==
-               unquote(static_cast<String_Constant*>(rhs)->value());
+        string slhs = static_cast<String_Quoted*>(lhs)->value();
+        string srhs = static_cast<String_Quoted*>(rhs)->value();
+        return unquote(slhs) == unquote(srhs) &&
+               (!(is_quoted(slhs) || is_quoted(srhs)) || slhs[0] == srhs[0]);
       } break;
 
       case Expression::LIST: {
@@ -1186,7 +1223,7 @@ namespace Sass {
     } else {
       v->value(ops[op](lv, tmp.value()));
     }
-    // v->normalize();
+    v->normalize();
     return v;
   }
 

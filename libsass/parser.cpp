@@ -40,6 +40,14 @@ namespace Sass {
     return p;
   }
 
+  Selector_List* Parser::parse_selector(const char* src, Context& ctx, ParserState pstate)
+  {
+    Parser p = Parser::from_c_str(src, ctx, pstate);
+    // ToDo: ruby sass errors on parent references
+    // ToDo: remap the source-map entries somehow
+    return p.parse_selector_group();
+  }
+
   bool Parser::peek_newline(const char* start)
   {
     return peek_linefeed(start ? start : position);
@@ -77,6 +85,8 @@ namespace Sass {
       }
     }
 
+    bool semicolon = false;
+    string(error_message);
     lex< optional_spaces >();
     Selector_Lookahead lookahead_result;
     while (position < end) {
@@ -89,14 +99,16 @@ namespace Sass {
             (*root) << new (ctx.mem) Import_Stub(pstate, imp->files()[i]);
           }
         }
-        if (!lex< one_plus< exactly<';'> > >()) error("top-level @import directive must be terminated by ';'", pstate);
+        semicolon = true;
+        error_message = "top-level @import directive must be terminated by ';'";
       }
       else if (peek< kwd_mixin >() || peek< kwd_function >()) {
         (*root) << parse_definition();
       }
       else if (peek< variable >()) {
         (*root) << parse_assignment();
-        if (!lex< one_plus< exactly<';'> > >()) error("top-level variable binding must be terminated by ';'", pstate);
+        semicolon = true;
+        error_message = "top-level variable binding must be terminated by ';'";
       }
       /*else if (peek< sequence< optional< exactly<'*'> >, alternatives< identifier_schema, identifier >, optional_spaces, exactly<':'>, optional_spaces, exactly<'{'> > >(position)) {
         (*root) << parse_propset();
@@ -104,7 +116,10 @@ namespace Sass {
       else if (peek< kwd_include >() /* || peek< exactly<'+'> >() */) {
         Mixin_Call* mixin_call = parse_mixin_call();
         (*root) << mixin_call;
-        if (!mixin_call->block() && !lex< one_plus< exactly<';'> > >()) error("top-level @include directive must be terminated by ';'", pstate);
+        if (!mixin_call->block()) {
+          semicolon = true;
+          error_message = "top-level @include directive must be terminated by ';'";
+        }
       }
       else if (peek< kwd_if_directive >()) {
         (*root) << parse_if_directive();
@@ -129,15 +144,18 @@ namespace Sass {
       }
       else if (peek< kwd_warn >()) {
         (*root) << parse_warning();
-        if (!lex< one_plus< exactly<';'> > >()) error("top-level @warn directive must be terminated by ';'", pstate);
+        semicolon = true;
+        error_message = "top-level @warn directive must be terminated by ';'";
       }
       else if (peek< kwd_err >()) {
         (*root) << parse_error();
-        if (!lex< one_plus< exactly<';'> > >()) error("top-level @error directive must be terminated by ';'", pstate);
+        semicolon = true;
+        error_message = "top-level @error directive must be terminated by ';'";
       }
       else if (peek< kwd_dbg >()) {
         (*root) << parse_debug();
-        if (!lex< one_plus< exactly<';'> > >()) error("top-level @debug directive must be terminated by ';'", pstate);
+        semicolon = true;
+        error_message = "top-level @debug directive must be terminated by ';'";
       }
       // ignore the @charset directive for now
       else if (lex< exactly< charset_kwd > >()) {
@@ -147,7 +165,10 @@ namespace Sass {
       else if (peek< at_keyword >()) {
         At_Rule* at_rule = parse_at_rule();
         (*root) << at_rule;
-        if (!at_rule->block() && !lex< one_plus< exactly<';'> > >()) error("top-level directive must be terminated by ';'", pstate);
+        if (!at_rule->block()){
+          semicolon = true;
+          error_message = "top-level directive must be terminated by ';'";
+        }
       }
       else if ((lookahead_result = lookahead_for_selector(position)).found) {
         (*root) << parse_ruleset(lookahead_result);
@@ -159,6 +180,11 @@ namespace Sass {
         lex< css_whitespace >();
         if (position >= end) break;
         error("invalid top-level expression", after_token);
+      }
+      if (semicolon) {
+        if (!lex< one_plus< exactly<';'> > >() && peek_css< optional_css_whitespace >() != end)
+        { error(error_message, pstate); }
+        semicolon = false;
       }
       lex< optional_spaces >();
     }
@@ -269,8 +295,16 @@ namespace Sass {
       else if (lex< uri_prefix >()) {
         Arguments* args = new (ctx.mem) Arguments(pstate);
         Function_Call* result = new (ctx.mem) Function_Call(pstate, "url", args);
-        if (lex < uri_value >()) { // chunk seems to work too!
+        if (lex< quoted_string >()) {
+          Expression* the_url = parse_string();
+          *args << new (ctx.mem) Argument(the_url->pstate(), the_url);
+        }
+        else if (lex < uri_value >(position)) { // chunk seems to work too!
           String* the_url = parse_interpolated_chunk(lexed);
+          *args << new (ctx.mem) Argument(the_url->pstate(), the_url);
+        }
+        else if (peek < skip_over_scopes < exactly < '(' >, exactly < ')' > > >(position)) {
+          Expression* the_url = parse_list(); // parse_interpolated_chunk(lexed);
           *args << new (ctx.mem) Argument(the_url->pstate(), the_url);
         }
         else {
@@ -415,7 +449,13 @@ namespace Sass {
     string name(Util::normalize_underscores(lexed));
     ParserState var_source_position = pstate;
     if (!lex< exactly<':'> >()) error("expected ':' after " + name + " in assignment statement", pstate);
-    Expression* val = parse_list();
+    Expression* val;
+    Selector_Lookahead lookahead = lookahead_for_value(position);
+    if (lookahead.has_interpolants && lookahead.found) {
+      val = parse_value_schema(lookahead.found);
+    } else {
+      val = parse_list();
+    }
     val->is_delayed(false);
     bool is_default = false;
     bool is_global = false;
@@ -482,6 +522,9 @@ namespace Sass {
         // accumulate the preceding segment if the position has advanced
         if (i < p) (*schema) << new (ctx.mem) String_Quoted(pstate, string(i, p));
         // skip to the delimiter by skipping occurences in quoted strings
+        if (peek < sequence < optional_spaces, exactly<rbrace> > >(p+2)) { position = p+2;
+          css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+        }
         const char* j = skip_over_scopes< exactly<hash_lbrace>, exactly<rbrace> >(p + 2, end_of_selector);
         Expression* interpolant = Parser::from_c_str(p+2, j, ctx, pstate).parse_list();
         interpolant->is_interpolant(true);
@@ -611,7 +654,7 @@ namespace Sass {
     seq->media_block(last_media_block);
     seq->last_block(block_stack.back());
     bool sawsomething = false;
-    if (lex< exactly<'&'> >()) {
+    if (lex_css< exactly<'&'> >()) {
       // check if we have a parent selector on the root level block
       if (block_stack.back() && block_stack.back()->is_root()) {
         //error("Base-level rules cannot contain the parent-selector-referencing character '&'.", pstate);
@@ -707,18 +750,9 @@ namespace Sass {
       if (lex< alternatives< even, odd > >()) {
         expr = new (ctx.mem) String_Quoted(p, lexed);
       }
-      else if (peek< binomial >(position)) {
-        lex< sequence< optional< coefficient >, exactly<'n'> > >();
-        String_Constant* var_coef = new (ctx.mem) String_Quoted(p, lexed);
-        lex< sign >();
-        String_Constant* op = new (ctx.mem) String_Quoted(p, lexed);
-        // Binary_Expression::Type op = (lexed == "+" ? Binary_Expression::ADD : Binary_Expression::SUB);
-        lex< one_plus < digit > >();
-        String_Constant* constant = new (ctx.mem) String_Quoted(p, lexed);
-        // expr = new (ctx.mem) Binary_Expression(p, op, var_coef, constant);
-        String_Schema* schema = new (ctx.mem) String_Schema(p, 3);
-        *schema << var_coef << op << constant;
-        expr = schema;
+      else if (lex< binomial >(position)) {
+        expr = new (ctx.mem) String_Constant(p, lexed);
+        ((String_Constant*)expr)->can_compress_whitespace(true);
       }
       else if (peek< sequence< optional<sign>,
                                zero_plus<digit>,
@@ -969,6 +1003,7 @@ namespace Sass {
     }
     else if (lex< sequence< optional< exactly<'*'> >, identifier > >()) {
       prop = new (ctx.mem) String_Quoted(pstate, lexed);
+      prop->is_delayed(true);
     }
     else {
       error("invalid property name", pstate);
@@ -980,13 +1015,25 @@ namespace Sass {
       return new (ctx.mem) Declaration(prop->pstate(), prop, parse_static_value()/*, lex<important>()*/);
     }
     else {
-      Expression* list_ex = parse_list();
-      if (List* list = dynamic_cast<List*>(list_ex)) {
-        if (list->length() == 0 && !peek< exactly <'{'> >()) {
-          css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+      Expression* value;
+      Selector_Lookahead lookahead = lookahead_for_value(position);
+      if (lookahead.found) {
+        if (lookahead.has_interpolants) {
+          value = parse_value_schema(lookahead.found);
+        } else {
+          value = parse_list();
         }
       }
-      return new (ctx.mem) Declaration(prop->pstate(), prop, list_ex/*, lex<important>()*/);
+      else {
+        value = parse_list();
+        if (List* list = dynamic_cast<List*>(value)) {
+          if (list->length() == 0 && !peek< exactly <'{'> >()) {
+            css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+          }
+        }
+      }
+
+      return new (ctx.mem) Declaration(prop->pstate(), prop, value/*, lex<important>()*/);
     }
   }
 
@@ -1008,8 +1055,18 @@ namespace Sass {
 
   Expression* Parser::parse_map()
   {
-    To_String to_string(&ctx);
+    ParserState opstate = pstate;
     Expression* key = parse_list();
+    if (String_Quoted* str = dynamic_cast<String_Quoted*>(key)) {
+      if (!str->quote_mark() && !str->is_delayed()) {
+        if (ctx.names_to_colors.count(str->value())) {
+          Color* c = new (ctx.mem) Color(*ctx.names_to_colors[str->value()]);
+          c->pstate(str->pstate());
+          c->disp(str->value());
+          key = c;
+        }
+      }
+    }
 
     // it's not a map so return the lexed value as a list value
     if (!peek< exactly<':'> >())
@@ -1019,7 +1076,7 @@ namespace Sass {
 
     Expression* value = parse_space_list();
 
-    Map* map = new (ctx.mem) Map(pstate, 1);
+    Map* map = new (ctx.mem) Map(opstate, 1);
     (*map) << make_pair(key, value);
 
     while (lex_css< exactly<','> >())
@@ -1029,6 +1086,16 @@ namespace Sass {
       { break; }
 
       Expression* key = parse_list();
+      if (String_Quoted* str = dynamic_cast<String_Quoted*>(key)) {
+        if (!str->quote_mark() && !str->is_delayed()) {
+          if (ctx.names_to_colors.count(str->value())) {
+            Color* c = new (ctx.mem) Color(*ctx.names_to_colors[str->value()]);
+            c->pstate(str->pstate());
+            c->disp(str->value());
+            key = c;
+          }
+        }
+      }
 
       if (!(lex< exactly<':'> >()))
       { error("invalid syntax", pstate); }
@@ -1038,8 +1105,9 @@ namespace Sass {
       (*map) << make_pair(key, value);
     }
 
-    if (map->has_duplicate_key())
-    { error("Duplicate key \"" + map->get_duplicate_key()->perform(&to_string) + "\" in map " + map->perform(&to_string) + ".", pstate); }
+    ParserState ps = map->pstate();
+    ps.offset = pstate - ps + pstate.offset;
+    map->pstate(ps);
 
     return map;
   }
@@ -1119,7 +1187,7 @@ namespace Sass {
                exactly<ellipsis>,
                default_flag,
                global_flag
-           > >(position))
+           > >(position)) && peek_css< optional_css_whitespace >() != end
     ) {
       (*space_list) << parse_disjunction();
     }
@@ -1211,6 +1279,11 @@ namespace Sass {
     }
     // if it's a singleton, return it directly; don't wrap it
     if (!peek< class_char< static_ops > >(position)) return factor;
+    return parse_operators(factor);
+  }
+
+  Expression* Parser::parse_operators(Expression* factor)
+  {
     // parse more factors and operators
     vector<Expression*> operands; // factors
     vector<Binary_Expression::Type> operators; // ops
@@ -1367,6 +1440,9 @@ namespace Sass {
         }
         // we need to skip anything inside strings
         // create a new target in parser/prelexer
+        if (peek < sequence < optional_spaces, exactly<rbrace> > >(p+2)) { position = p+2;
+          css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+        }
         const char* j = skip_over_scopes< exactly<hash_lbrace>, exactly<rbrace> >(p + 2, chunk.end); // find the closing brace
         if (j) { --j;
           // parse the interpolant and accumulate it
@@ -1390,6 +1466,14 @@ namespace Sass {
     return schema;
   }
 
+  String_Constant* Parser::parse_static_expression()
+  {
+    if (peek< sequence< number, optional_spaces, exactly<'/'>, optional_spaces, number > >()) {
+      return parse_static_value();
+    }
+    return 0;
+  }
+
   String_Constant* Parser::parse_static_value()
   {
     lex< static_value >();
@@ -1398,7 +1482,7 @@ namespace Sass {
     --position;
 
     String_Constant* str_node = new (ctx.mem) String_Constant(pstate, str.time_wspace());
-    // str_node->is_delayed(true);
+    str_node->is_delayed(true);
     return str_node;
   }
 
@@ -1415,28 +1499,26 @@ namespace Sass {
     Token str(lexed);
     const char* i = str.begin;
     // see if there any interpolants
-    const char* q;
     const char* p = find_first_in_interval< exactly<hash_lbrace> >(str.begin, str.end);
     if (!p) {
       String_Constant* str_node = new (ctx.mem) String_Constant(pstate, normalize_wspace(string(str.begin, str.end)));
       str_node->is_delayed(true);
+      str_node->quote_mark('*');
       return str_node;
     }
 
     String_Schema* schema = new (ctx.mem) String_Schema(pstate);
     while (i < str.end) {
-      q = find_first_in_interval< alternatives< exactly<'"'>, exactly<'\''> > >(i, str.end);
       p = find_first_in_interval< exactly<hash_lbrace> >(i, str.end);
-      if (q && (!p || p > q)) {
-        if (i < q) {
-          (*schema) << new (ctx.mem) String_Constant(pstate, string(i, q)); // accumulate the preceding segment if it's nonempty
-        }
-        (*schema) << new (ctx.mem) String_Constant(pstate, string(q, q+1)); // capture the quote mark separately
-        i = q+1;
-      }
-      else if (p) {
+      if (p) {
         if (i < p) {
-          (*schema) << new (ctx.mem) String_Constant(pstate, string(i, p)); // accumulate the preceding segment if it's nonempty
+          String_Constant* part = new (ctx.mem) String_Constant(pstate, normalize_wspace(string(i, p))); // accumulate the preceding segment if it's nonempty
+          part->is_delayed(true);
+          part->quote_mark('*'); // avoid unquote in interpolation
+          (*schema) << part;
+        }
+        if (peek < sequence < optional_spaces, exactly<rbrace> > >(p+2)) { position = p+2;
+          css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
         }
         const char* j = skip_over_scopes< exactly<hash_lbrace>, exactly<rbrace> >(p+2, str.end); // find the closing brace
         if (j) {
@@ -1452,7 +1534,12 @@ namespace Sass {
         }
       }
       else { // no interpolants left; add the last segment if nonempty
-        if (i < str.end) (*schema) << new (ctx.mem) String_Constant(pstate, string(i, str.end));
+        if (i < str.end) {
+          String_Constant* part = new (ctx.mem) String_Constant(pstate, normalize_wspace(string(i, str.end)));
+          part->is_delayed(true);
+          part->quote_mark('*'); // avoid unquote in interpolation
+          (*schema) << part;
+        }
         break;
       }
     }
@@ -1466,15 +1553,13 @@ namespace Sass {
       *kwd_arg << new (ctx.mem) Variable(pstate, Util::normalize_underscores(lexed));
     } else {
       lex< alternatives< identifier_schema, identifier > >();
-      *kwd_arg << new (ctx.mem) String_Quoted(pstate, lexed);
+      *kwd_arg << new (ctx.mem) String_Constant(pstate, lexed);
     }
     lex< exactly<'='> >();
-    *kwd_arg << new (ctx.mem) String_Quoted(pstate, lexed);
+    *kwd_arg << new (ctx.mem) String_Constant(pstate, lexed);
     if (peek< variable >()) *kwd_arg << parse_list();
     else if (lex< number >()) *kwd_arg << new (ctx.mem) Textual(pstate, Textual::NUMBER, Util::normalize_decimals(lexed));
-    else if (lex< alternatives< identifier_schema, identifier, number, hexa, hex > >()) {
-      *kwd_arg << new (ctx.mem) String_Quoted(pstate, lexed);
-    }
+    else if (peek < ie_keyword_arg_value >()) { *kwd_arg << parse_list(); }
     return kwd_arg;
   }
 
@@ -1482,11 +1567,21 @@ namespace Sass {
   {
     String_Schema* schema = new (ctx.mem) String_Schema(pstate);
     size_t num_items = 0;
+    if (peek<exactly<'}'>>()) {
+      css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+    }
     while (position < stop) {
-      if (lex< interpolant >()) {
+      if (lex< spaces >() && num_items) {
+        (*schema) << new (ctx.mem) String_Constant(pstate, " ");
+      }
+      else if (lex< interpolant >()) {
         Token insides(Token(lexed.begin + 2, lexed.end - 1));
-        Expression* interp_node = Parser::from_token(insides, ctx, pstate).parse_list();
-        interp_node->is_interpolant(true);
+        Expression* interp_node;
+        Parser p = Parser::from_token(insides, ctx, pstate);
+        if (!(interp_node = p.parse_static_expression())) {
+          interp_node = p.parse_list();
+          interp_node->is_interpolant(true);
+        }
         (*schema) << interp_node;
       }
       else if (lex< exactly<'%'> >()) {
@@ -1502,16 +1597,27 @@ namespace Sass {
         (*schema) << new (ctx.mem) Textual(pstate, Textual::DIMENSION, lexed);
       }
       else if (lex< number >()) {
-        (*schema) << new (ctx.mem) Textual(pstate, Textual::NUMBER, lexed);
+        Expression* factor = new (ctx.mem) Textual(pstate, Textual::NUMBER, lexed);
+        if (peek< class_char< static_ops > >()) {
+          (*schema) << parse_operators(factor);
+        } else {
+          (*schema) << factor;
+        }
       }
       else if (lex< hex >()) {
         (*schema) << new (ctx.mem) Textual(pstate, Textual::HEX, unquote(lexed));
+      }
+      else if (lex < exactly < '-' > >()) {
+        (*schema) << new (ctx.mem) String_Constant(pstate, lexed);
       }
       else if (lex< quoted_string >()) {
         (*schema) << new (ctx.mem) String_Quoted(pstate, lexed);
       }
       else if (lex< variable >()) {
         (*schema) << new (ctx.mem) Variable(pstate, Util::normalize_underscores(lexed));
+      }
+      else if (peek< parenthese_scope >()) {
+        (*schema) << parse_factor();
       }
       else {
         error("error parsing interpolated value", pstate);
@@ -1575,6 +1681,9 @@ namespace Sass {
         }
         // we need to skip anything inside strings
         // create a new target in parser/prelexer
+        if (peek < sequence < optional_spaces, exactly<rbrace> > >(p+2)) { position = p+2;
+          css_error("Invalid CSS", " after ", ": expected expression (e.g. 1px, bold), was ");
+        }
         const char* j = skip_over_scopes< exactly<hash_lbrace>, exactly<rbrace> >(p+2, id.end); // find the closing brace
         if (j) {
           // parse the interpolant and accumulate it
@@ -1988,6 +2097,7 @@ namespace Sass {
            (q = peek< class_name >(p))                             ||
            (q = peek< sequence< pseudo_prefix, identifier > >(p))  ||
            (q = peek< percentage >(p))                             ||
+           (q = peek< variable >(p))                            ||
            (q = peek< dimension >(p))                              ||
            (q = peek< quoted_string >(p))                          ||
            (q = peek< exactly<'*'> >(p))                           ||
@@ -2079,6 +2189,56 @@ namespace Sass {
                                    prefix_match,
                                    suffix_match,
                                    substring_match> >(p))          ||
+           (q = peek< sequence< exactly<'.'>, interpolant > >(p))  ||
+           (q = peek< sequence< exactly<'#'>, interpolant > >(p))  ||
+           (q = peek< sequence< one_plus< exactly<'-'> >, interpolant > >(p))  ||
+           (q = peek< sequence< pseudo_prefix, interpolant > >(p)) ||
+           (q = peek< interpolant >(p))                            ||
+           (q = peek< optional >(p))) {
+      p = q;
+      if (*(p - 1) == '}') saw_interpolant = true;
+      saw_stuff = true;
+    }
+
+    Selector_Lookahead result;
+    result.found            = peek< alternatives< exactly<';'>, exactly<'}'>, exactly<'{'> > >(p) && saw_stuff ? p : 0;
+    result.has_interpolants = saw_interpolant;
+
+    return result;
+  }
+
+
+  Selector_Lookahead Parser::lookahead_for_value(const char* start)
+  {
+    const char* p = start ? start : position;
+    const char* q;
+    bool saw_interpolant = false;
+    bool saw_stuff = false;
+
+    while ((q = peek< identifier >(p))                             ||
+           (q = peek< percentage >(p))                             ||
+           (q = peek< dimension >(p))                              ||
+           (q = peek< quoted_string >(p))                          ||
+           (q = peek< variable >(p))                               ||
+           (q = peek< exactly<'*'> >(p))                           ||
+           (q = peek< exactly<'+'> >(p))                           ||
+           (q = peek< exactly<'~'> >(p))                           ||
+           (q = peek< exactly<'>'> >(p))                           ||
+           (q = peek< exactly<','> >(p))                           ||
+           (q = peek< sequence<parenthese_scope, interpolant>>(p)) ||
+           (saw_stuff && (q = peek< exactly<'-'> >(p)))            ||
+           (q = peek< binomial >(p))                               ||
+           (q = peek< block_comment >(p))                          ||
+           (q = peek< sequence< optional<sign>,
+                                zero_plus<digit>,
+                                exactly<'n'> > >(p))               ||
+           (q = peek< sequence< optional<sign>,
+                                one_plus<digit> > >(p))            ||
+           (q = peek< number >(p))                                 ||
+           (q = peek< sequence< exactly<'&'>,
+                                identifier_alnums > >(p))          ||
+           (q = peek< exactly<'&'> >(p))                           ||
+           (q = peek< exactly<'%'> >(p))                           ||
            (q = peek< sequence< exactly<'.'>, interpolant > >(p))  ||
            (q = peek< sequence< exactly<'#'>, interpolant > >(p))  ||
            (q = peek< sequence< one_plus< exactly<'-'> >, interpolant > >(p))  ||
@@ -2209,14 +2369,16 @@ namespace Sass {
     const char* pos = peek < optional_spaces >();
     bool ellipsis_left = false;
     const char* pos_left(pos);
-    while (*pos_left && pos_left >= source) {
+    while (*pos_left && pos_left > source) {
       if (pos - pos_left > max_len) {
         ellipsis_left = true;
         break;
       }
-      if (*pos_left == '\r') break;
-      if (*pos_left == '\n') break;
-      -- pos_left;
+      const char* prev = pos_left - 1;
+      if (*prev == '\r') break;
+      if (*prev == '\n') break;
+      if (*prev == 10) break;
+      pos_left = prev;
     }
     bool ellipsis_right = false;
     const char* pos_right(pos);
@@ -2227,6 +2389,7 @@ namespace Sass {
       }
       if (*pos_right == '\r') break;
       if (*pos_right == '\n') break;
+      if (*pos_left == 10) break;
       ++ pos_right;
     }
     string left(pos_left, pos);

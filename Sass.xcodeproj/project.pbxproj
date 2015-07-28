@@ -38,7 +38,6 @@
 		7E31AAC61AF3B617003C7475 /* position.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA731AF3B617003C7475 /* position.cpp */; };
 		7E31AAC81AF3B617003C7475 /* prelexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA781AF3B617003C7475 /* prelexer.cpp */; };
 		7E31AACA1AF3B617003C7475 /* remove_placeholders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA7B1AF3B617003C7475 /* remove_placeholders.cpp */; };
-		7E31AACB1AF3B617003C7475 /* resource.rc in Resources */ = {isa = PBXBuildFile; fileRef = 7E31AA7E1AF3B617003C7475 /* resource.rc */; };
 		7E31AACC1AF3B617003C7475 /* sass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA7F1AF3B617003C7475 /* sass.cpp */; };
 		7E31AACD1AF3B617003C7475 /* sass2scss.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA811AF3B617003C7475 /* sass2scss.cpp */; };
 		7E31AACE1AF3B617003C7475 /* sass_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA831AF3B617003C7475 /* sass_context.cpp */; };
@@ -46,9 +45,7 @@
 		7E31AAD01AF3B617003C7475 /* sass_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA871AF3B617003C7475 /* sass_interface.cpp */; };
 		7E31AAD11AF3B617003C7475 /* sass_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA891AF3B617003C7475 /* sass_util.cpp */; };
 		7E31AAD21AF3B617003C7475 /* sass_values.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA8B1AF3B617003C7475 /* sass_values.cpp */; };
-		7E31AAD31AF3B617003C7475 /* sass_version.h.in in Resources */ = {isa = PBXBuildFile; fileRef = 7E31AA8E1AF3B617003C7475 /* sass_version.h.in */; };
 		7E31AAD41AF3B617003C7475 /* source_map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA8F1AF3B617003C7475 /* source_map.cpp */; };
-		7E31AAD51AF3B617003C7475 /* libsass.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = 7E31AA931AF3B617003C7475 /* libsass.pc.in */; };
 		7E31AADD1AF3B617003C7475 /* to_c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA9C1AF3B617003C7475 /* to_c.cpp */; };
 		7E31AADE1AF3B617003C7475 /* to_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AA9E1AF3B617003C7475 /* to_string.cpp */; };
 		7E31AADF1AF3B617003C7475 /* units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E31AAA01AF3B617003C7475 /* units.cpp */; };
@@ -140,7 +137,6 @@
 		7E31AA791AF3B617003C7475 /* prelexer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = prelexer.hpp; sourceTree = "<group>"; };
 		7E31AA7B1AF3B617003C7475 /* remove_placeholders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = remove_placeholders.cpp; sourceTree = "<group>"; };
 		7E31AA7C1AF3B617003C7475 /* remove_placeholders.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = remove_placeholders.hpp; sourceTree = "<group>"; };
-		7E31AA7E1AF3B617003C7475 /* resource.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = resource.rc; sourceTree = "<group>"; };
 		7E31AA7F1AF3B617003C7475 /* sass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sass.cpp; sourceTree = "<group>"; };
 		7E31AA801AF3B617003C7475 /* sass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sass.h; sourceTree = "<group>"; };
 		7E31AA811AF3B617003C7475 /* sass2scss.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sass2scss.cpp; sourceTree = "<group>"; };
@@ -156,11 +152,9 @@
 		7E31AA8B1AF3B617003C7475 /* sass_values.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sass_values.cpp; sourceTree = "<group>"; };
 		7E31AA8C1AF3B617003C7475 /* sass_values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sass_values.h; sourceTree = "<group>"; };
 		7E31AA8D1AF3B617003C7475 /* sass_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sass_version.h; sourceTree = "<group>"; };
-		7E31AA8E1AF3B617003C7475 /* sass_version.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sass_version.h.in; sourceTree = "<group>"; };
 		7E31AA8F1AF3B617003C7475 /* source_map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = source_map.cpp; sourceTree = "<group>"; };
 		7E31AA901AF3B617003C7475 /* source_map.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = source_map.hpp; sourceTree = "<group>"; };
 		7E31AA911AF3B617003C7475 /* subset_map.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = subset_map.hpp; sourceTree = "<group>"; };
-		7E31AA931AF3B617003C7475 /* libsass.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libsass.pc.in; sourceTree = "<group>"; };
 		7E31AA9C1AF3B617003C7475 /* to_c.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = to_c.cpp; sourceTree = "<group>"; };
 		7E31AA9D1AF3B617003C7475 /* to_c.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = to_c.hpp; sourceTree = "<group>"; };
 		7E31AA9E1AF3B617003C7475 /* to_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = to_string.cpp; sourceTree = "<group>"; };
@@ -346,7 +340,6 @@
 				7E31AA791AF3B617003C7475 /* prelexer.hpp */,
 				7E31AA7B1AF3B617003C7475 /* remove_placeholders.cpp */,
 				7E31AA7C1AF3B617003C7475 /* remove_placeholders.hpp */,
-				7E31AA7D1AF3B617003C7475 /* res */,
 				7E31AA7F1AF3B617003C7475 /* sass.cpp */,
 				7E31AA801AF3B617003C7475 /* sass.h */,
 				7E31AA811AF3B617003C7475 /* sass2scss.cpp */,
@@ -362,11 +355,9 @@
 				7E31AA8B1AF3B617003C7475 /* sass_values.cpp */,
 				7E31AA8C1AF3B617003C7475 /* sass_values.h */,
 				7E31AA8D1AF3B617003C7475 /* sass_version.h */,
-				7E31AA8E1AF3B617003C7475 /* sass_version.h.in */,
 				7E31AA8F1AF3B617003C7475 /* source_map.cpp */,
 				7E31AA901AF3B617003C7475 /* source_map.hpp */,
 				7E31AA911AF3B617003C7475 /* subset_map.hpp */,
-				7E31AA921AF3B617003C7475 /* support */,
 				7E31AA9C1AF3B617003C7475 /* to_c.cpp */,
 				7E31AA9D1AF3B617003C7475 /* to_c.hpp */,
 				7E31AA9E1AF3B617003C7475 /* to_string.cpp */,
@@ -390,22 +381,6 @@
 				7E31AA371AF3B616003C7475 /* encode.h */,
 			);
 			path = b64;
-			sourceTree = "<group>";
-		};
-		7E31AA7D1AF3B617003C7475 /* res */ = {
-			isa = PBXGroup;
-			children = (
-				7E31AA7E1AF3B617003C7475 /* resource.rc */,
-			);
-			path = res;
-			sourceTree = "<group>";
-		};
-		7E31AA921AF3B617003C7475 /* support */ = {
-			isa = PBXGroup;
-			children = (
-				7E31AA931AF3B617003C7475 /* libsass.pc.in */,
-			);
-			path = support;
 			sourceTree = "<group>";
 		};
 		7E31AAA21AF3B617003C7475 /* utf8 */ = {
@@ -470,14 +445,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E31AACB1AF3B617003C7475 /* resource.rc in Resources */,
 				7E31AAC01AF3B617003C7475 /* LICENSE in Resources */,
 				7E28976A19F8236B00E9AA84 /* scss in Resources */,
-				7E31AAD31AF3B617003C7475 /* sass_version.h.in in Resources */,
 				7E1ADAB218B1BDC500055CF5 /* EGPreferencesController.xib in Resources */,
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
 				7E3BF26F18B313FC00683617 /* sass-lang.png in Resources */,
-				7E31AAD51AF3B617003C7475 /* libsass.pc.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

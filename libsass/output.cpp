@@ -349,11 +349,13 @@ namespace Sass {
 
     append_scope_opener();
 
+    bool format = kwd != "@font-face";;
+
     for (size_t i = 0, L = b->length(); i < L; ++i) {
       Statement* stm = (*b)[i];
       if (!stm->is_hoistable()) {
         stm->perform(this);
-        if (i < L - 1) append_special_linefeed();
+        if (i < L - 1 && format) append_special_linefeed();
       }
     }
 
@@ -361,7 +363,7 @@ namespace Sass {
       Statement* stm = (*b)[i];
       if (stm->is_hoistable()) {
         stm->perform(this);
-        if (i < L - 1) append_special_linefeed();
+        if (i < L - 1 && format) append_special_linefeed();
       }
     }
 
@@ -383,10 +385,16 @@ namespace Sass {
   {
     if (String_Quoted* quoted = dynamic_cast<String_Quoted*>(s)) {
       return Output::operator()(quoted);
-    } else if (!in_comment) {
-      append_token(string_to_output(s->value()), s);
     } else {
-      append_token(s->value(), s);
+      string value(s->value());
+      if (s->can_compress_whitespace() && output_style() == COMPRESSED) {
+        value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
+      }
+      if (!in_comment) {
+        append_token(string_to_output(value), s);
+      } else {
+        append_token(value, s);
+      }
     }
   }
 

@@ -57,6 +57,8 @@ namespace Sass {
     static Parser from_c_str(const char* src, Context& ctx, ParserState pstate = ParserState("[CSTRING]"));
     static Parser from_c_str(const char* beg, const char* end, Context& ctx, ParserState pstate = ParserState("[CSTRING]"));
     static Parser from_token(Token t, Context& ctx, ParserState pstate = ParserState("[TOKEN]"));
+    // special static parsers to convert strings into certain selectors
+    static Selector_List* parse_selector(const char* src, Context& ctx, ParserState pstate = ParserState("[SELECTOR]"));
 
 #ifdef __clang__
 
@@ -239,10 +241,12 @@ namespace Sass {
     Function_Call_Schema* parse_function_call_schema();
     String* parse_interpolated_chunk(Token, bool constant = false);
     String* parse_string();
+    String_Constant* parse_static_expression();
     String_Constant* parse_static_value();
     String* parse_ie_property();
     String* parse_ie_keyword_arg();
     String_Schema* parse_value_schema(const char* stop);
+    Expression* parse_operators(Expression* factor);
     String* parse_identifier_schema();
     // String_Schema* parse_url_schema();
     If* parse_if_directive(bool else_if = false);
@@ -270,6 +274,7 @@ namespace Sass {
 
     void parse_block_comments(Block* block);
 
+    Selector_Lookahead lookahead_for_value(const char* start = 0);
     Selector_Lookahead lookahead_for_selector(const char* start = 0);
     Selector_Lookahead lookahead_for_extension_target(const char* start = 0);
 
