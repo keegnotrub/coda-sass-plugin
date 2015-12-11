@@ -114,7 +114,7 @@
 
 - (NSString*)cssDirectoryForScssDirectory:(NSString*)scssDirectory
 {
-	NSString *pattern = @"{css, styles, stylesheets, style}";
+	NSString *pattern = @"{css,styles,stylesheets,style}";
 	NSString *fullPattern = [scssDirectory stringByAppendingPathComponent:pattern];
 	
 	glob_t gt;
